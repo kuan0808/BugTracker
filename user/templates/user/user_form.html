@@ -6,7 +6,7 @@
     <form method="POST" class="row row-no-gutters was-validated">
         {% csrf_token %}
           <div class="col-12">
-              <legend class="border-bottom pb-1 mb-2 text-center">{% translate 'Register' %}</legend>
+              <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">{% translate 'Register' %}</legend>
           </div>
         {% for field in form %}
             {% if field.name != 'first_name' and field.name != 'last_name' %}
@@ -41,8 +41,8 @@
                 </div>
         {% endfor %}
 
-        <div class="col-12 form-group">
-            <button class="btn btn-outline-info my-auto" type="submit">Sign Up</button>
+        <div class="col-12 text-center form-group">
+            <button class="btn btn-lg btn-outline-info" type="submit">Sign Up</button>
         </div>
     </form>
     <div class="border-top pt-1">

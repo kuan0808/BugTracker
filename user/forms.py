@@ -22,7 +22,7 @@ class UserRegisterForm(forms.ModelForm):
         password1 = self.cleaned_data['password1']
         password2 = self.cleaned_data['password2']
         if password1 != password2:
-            raise ValidationError(message=_('Password must be the same'),
+            raise ValidationError(message=_('Password must be the same as above.'),
                                   code='notmatch')
         return password2
 
@@ -51,10 +51,10 @@ class UserRegisterForm(forms.ModelForm):
 
         error_messages = {
             'username': {
-                'unique': _("Username has been used")
+                'unique': _("Username has been used.")
             },
             'email': {
-                'unique': _('Email has been used')
+                'unique': _('Email has been used.')
             },
         }
 
