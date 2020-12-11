@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+
+# from .models import CustomUser 用下面的方法取得User模型
+from django.contrib.auth import get_user_model
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
@@ -42,9 +45,9 @@ class UserRegisterForm(forms.ModelForm):
         return result
 
     class Meta:
-        model = CustomUser
+        model = get_user_model()
 
-        fields = ('username', 'email', 'first_name', 'last_name')
+        fields = ('first_name', 'last_name', 'username', 'email',)
         labels = {
             'email': _('Email address'),
         }
@@ -60,3 +63,9 @@ class UserRegisterForm(forms.ModelForm):
 
         # 'oninvalid': "setCustomValidity('This is required')",
         # 'oninput': "setCustomValidity('')"
+
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField()
+
