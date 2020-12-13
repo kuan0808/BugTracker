@@ -44,3 +44,8 @@ class UserLogInView(FormView):
             messages.warning(self.request, _('Log in failed. \
                                 please try again'))
             return redirect('login')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

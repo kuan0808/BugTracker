@@ -80,6 +80,9 @@ class UserLoginForm(forms.Form):
         username = cleaned_data['username']
         password = cleaned_data['password']
         user = user_model.objects.filter(Q(username__iexact=username)).first()
+        '''
+        用user.check_password(password)來驗證password，不能用model，model中的password是亂碼
+        '''
         mismatch = bool(user and not user.check_password(password))
         invalid = bool(not user)
         if mismatch:
