@@ -4,31 +4,32 @@
 <div class="col-md-4 offset-md-4">
     <form method="POST" class="row row-no-gutters">
         {% csrf_token %}
-          <div class="col-12">
-              <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">{% translate 'LOG IN' %}</legend>
-          </div>
+        <div class="col-12">
+            <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">
+                {% translate 'LOG IN' %}</legend>
+        </div>
         {% for field in form %}
-            <div class="col-12 form-group">
-                {{ field.label_tag }}
-                <input {% if field.name == 'password'%}
-                        type="password"
-                        {% else %}
-                        type="text"
-                        {% endif %}
-                        name="{{ field.name }}"
-                        class="textinput textInput form-control"
-                        required
-                        id="id_{{ field.name }}">
-             </div>
+        <div class="col-12 form-group">
+            {{ field.label_tag }}
+            <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
+                name="{{ field.name }}" class="textinput textInput form-control" placeholder="Enter {{ field.label }}"
+                id="id_{{ field.name }}" required>
+            <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
+            {% if form.errors %}
+            {% for error_message in field.errors %}
+            <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
+            {% endfor %}
+            {% endif %}
+        </div>
         {% endfor %}
         <div class="col-12 text-center form-group">
-                <button class="btn btn-lg btn-outline-info" type="submit">Sign In</button>
-            </div>
-    </form>
-        <div class="border-top pt-1 text-center">
-            <small class="text-muted">
-                Don't have an account? <a class="ml-2" href="{% url 'register'%}">Sign Up</a>
-            </small>
+            <button class="btn btn-lg btn-outline-info" type="submit">Sign In</button>
         </div>
+    </form>
+    <div class="border-top pt-1 text-center">
+        <small class="text-muted">
+            Don't have an account? <a class="ml-2" href="{% url 'register'%}">Sign Up</a>
+        </small>
+    </div>
 </div>
 {% endblock content %}

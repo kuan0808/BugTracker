@@ -3,54 +3,50 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="col-md-6 offset-md-3 ">
-<!--    <div class="content-section">-->
-        <form method="POST" class="row row-no-gutters was-validated">
-            {% csrf_token %}
-              <div class="col-12">
-                  <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">{% translate 'Register' %}</legend>
-              </div>
-            {% for field in form %}
-                {% if field.name != 'first_name' and field.name != 'last_name' %}
-                    <div class="col-12 form-group">
-                {% else %}
-                    <div class="col-6 form-group">
+    <!--    <div class="content-section">-->
+    <form method="POST" class="row row-no-gutters was-validated">
+        {% csrf_token %}
+        <div class="col-12">
+            <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">
+                {% translate 'Register' %}</legend>
+        </div>
+        {% for field in form %}
+        {% if field.name != 'first_name' and field.name != 'last_name' %}
+        <div class="col-12 form-group">
+            {% else %}
+            <div class="col-6 form-group">
                 {% endif %}
-                    {{ field.label_tag }}
-                    {% blocktrans asvar the_placeholder %}Enter {{ field.label|escape }} {% endblocktrans %}
-                    <input {% if field.name == 'email' %}
-                            type="email"
-                            {% elif field.name == 'password1' or field.name == 'password2'%}
-                            type="password"
-                            {% else %}
-                            type="text"
-                            {% endif %}
-                            name="{{ field.name }}"
-                            {% if field.name != 'password2' %}
-                                placeholder="{{ field.label|escape }}"
-                            {% else %}
-                                placeholder="Enter Password Again"
-                            {% endif %}
-                            class="textinput textInput form-control"
-                            required
-                            id="id_{{ field.name }}">
-                    {% if form.errors %}
-                        {% for error_message in field.errors %}
-    <!--                    這裡的error_message要用 |striptags，才能取得錯誤訊息-->
-                            <p class="invalid-feedback"><strong>{{ error_message|striptags }}</strong></p>
-                        {% endfor %}
+                {{ field.label_tag }}
+                {% blocktrans asvar the_placeholder %}Enter {{ field.label|escape }} {% endblocktrans %}
+                <input {% if field.name == 'email' %} type="email"
+                        {% elif field.name == 'password1' or field.name == 'password2'%} type="password" {% else %}
+                    type="text" {% endif %}
+                    name="{{ field.name }}" {% if field.name != 'password2' %}
+                    placeholder="{{ field.label|escape }}" {% else %} placeholder="Enter Password Again" {% endif %}
+                    {% if field.value and field.name != 'password1' and field.name != 'password2' %}
+                    value="{{ field.value }}"
                     {% endif %}
-                    </div>
+                    class="textinput textInput form-control {% if  field.errors %}invalid{% endif %}"
+                    id="id_{{ field.name }}"
+                    required>
+                {% if form.errors %}
+                {% for error_message in field.errors %}
+                <!--這裡的error_message要用 |striptags，才能取得錯誤訊息-->
+                <!--invalid-feedback後面要加d-block才會強制顯示錯誤訊息，否則有可能不會顯示-->
+                <p class="invalid-feedback d-block"><strong>{{ error_message|striptags }}</strong></p>
+                {% endfor %}
+                {% endif %}
+            </div>
             {% endfor %}
-
             <div class="col-12 text-center form-group">
                 <button class="btn btn-lg btn-outline-info" type="submit">Sign Up</button>
             </div>
-        </form>
-        <div class="border-top pt-1 text-center">
-            <small class="text-muted">
-                Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
-            </small>
-        </div>
-<!--    </div>-->
+    </form>
+    <div class="border-top pt-1 text-center">
+        <small class="text-muted">
+            Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+        </small>
+    </div>
+    <!--    </div>-->
 </div>
 {% endblock %}

@@ -1,4 +1,6 @@
 from django import forms
+from django.shortcuts import redirect
+from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 
 # from .models import CustomUser 用下面的方法取得User模型
@@ -41,7 +43,8 @@ class UserRegisterForm(forms.ModelForm):
         # loop on *all* fields if key '__all__' found else only on errors:
         for x in (self.fields if '__all__' in self.errors else self.errors):
             attrs = self.fields[x].widget.attrs
-            attrs.update({'class': attrs.get('class', '') + ' is-invalid'})
+            attrs.update({'class': attrs.get('class', '') + ' is-invalid',
+                          'value': '{{ field.value }}'})
         return result
 
     class Meta:
@@ -50,6 +53,8 @@ class UserRegisterForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'username', 'email',)
         labels = {
             'email': _('Email address'),
+            'first_name': _('First name'),
+            'last_name': _('Last name')
         }
 
         error_messages = {
@@ -66,6 +71,26 @@ class UserRegisterForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField()
+    username = forms.CharField(label=_('Username'), required=True)
+    password = forms.CharField(label=_('Password'), required=True)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        user_model = get_user_model()
+        username = cleaned_data['username']
+        password = cleaned_data['password']
+        user = user_model.objects.filter(Q(username__iexact=username)).first()
+        mismatch = bool(user and not user.check_password(password))
+        invalid = bool(not user)
+        if mismatch:
+            error = ValidationError(message="Username and password don't match !",
+                                    code='mismatch')
+            self.add_error('password', error)
+            self.add_error('username', error)
+
+        if invalid:
+            error = ValidationError(message="Invalid username and password !",
+                                    code='invalid')
+            self.add_error('password', error)
+            self.add_error('username', error)
+        return cleaned_data
