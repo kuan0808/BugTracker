@@ -1,13 +1,11 @@
 from django import forms
 from django.shortcuts import redirect
 from django.db.models import Q
-from django.contrib.auth.forms import UserCreationForm
-
 # from .models import CustomUser 用下面的方法取得User模型
 from django.contrib.auth import get_user_model
-
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+from .models import Profile
 
 
 class UserRegisterForm(forms.ModelForm):
@@ -37,15 +35,14 @@ class UserRegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-
-    def is_valid(self):
-        result = super().is_valid()
-        # loop on *all* fields if key '__all__' found else only on errors:
-        for x in (self.fields if '__all__' in self.errors else self.errors):
-            attrs = self.fields[x].widget.attrs
-            attrs.update({'class': attrs.get('class', '') + ' is-invalid',
-                          'value': '{{ field.value }}'})
-        return result
+    # def is_valid(self):
+    #     result = super().is_valid()
+    #     # loop on *all* fields if key '__all__' found else only on errors:
+    #     for x in (self.fields if '__all__' in self.errors else self.errors):
+    #         attrs = self.fields[x].widget.attrs
+    #         attrs.update({'class': attrs.get('class', '') + ' is-invalid',
+    #                       'value': '{{ field.value }}'})
+    #     return result
 
     class Meta:
         model = get_user_model()
@@ -65,9 +62,6 @@ class UserRegisterForm(forms.ModelForm):
                 'unique': _('Email has been used.')
             },
         }
-
-        # 'oninvalid': "setCustomValidity('This is required')",
-        # 'oninput': "setCustomValidity('')"
 
 
 class UserLoginForm(forms.Form):
@@ -97,3 +91,20 @@ class UserLoginForm(forms.Form):
             self.add_error('password', error)
             self.add_error('username', error)
         return cleaned_data
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'first_name', 'last_name', 'email')
+        labels = {
+            'email': _('Email Address'),
+            'first_name': _('First Name'),
+            'last_name': _('Last Name')
+        }
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('image',)

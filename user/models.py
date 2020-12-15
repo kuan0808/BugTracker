@@ -7,16 +7,15 @@ from .managers import CustomUserManager
 
 
 class CustomUser(AbstractBaseUser):
-    email = models.EmailField(_('email'), unique=True)
-    username = models.CharField(_('username'), max_length=20, unique=True)
-    first_name = models.CharField(_('first_name'), max_length=20)
-    last_name = models.CharField(_('last_name'), max_length=20)
+    email = models.EmailField(_('Email Address'), unique=True)
+    username = models.CharField(_('Username'), max_length=20, unique=True)
+    first_name = models.CharField(_('First Name'), max_length=20)
+    last_name = models.CharField(_('Last Name'), max_length=20)
     is_active = models.BooleanField(_('is_active'), default=True)
-    is_admin = models.BooleanField(_('is_admin'), default=False)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now=True)
+    is_staff = models.BooleanField(_('is_staff'), default=False)
+    is_superuser = models.BooleanField(_('is_superuser'), default=False)
+    date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
+    last_login = models.DateTimeField(_('Last Login'), auto_now=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
@@ -41,13 +40,17 @@ class CustomUser(AbstractBaseUser):
         return self.username
 
     def has_perm(self, perm, obj=None):
-        return self.is_admin
+        return self.is_superuser
 
     def has_module_perms(self, app_label):
-        return True
+        return self.is_superuser
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        verbose_name = _('The user')
+        verbose_name_plural = _('Users')
 
 
 class Profile(models.Model):
@@ -57,3 +60,6 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
+    class Meta:
+        verbose_name = _('Profile')
+        verbose_name_plural = _('User Profiles')

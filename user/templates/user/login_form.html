@@ -1,7 +1,7 @@
 {% extends 'user/user_base.html' %}
 {% load i18n %}
 {% block content %}
-<div class="col-md-4 offset-md-4">
+<div class="col-sm-6 offset-sm-3 col-md-4 offset-md-4">
     <form method="POST" class="row row-no-gutters">
         {% csrf_token %}
         <div class="col-12">
@@ -9,21 +9,27 @@
                 {% translate 'LOG IN' %}</legend>
         </div>
         {% for field in form %}
-        <div class="col-12 form-group">
+        <div class="col-12 form-group pb-3">
             {{ field.label_tag }}
             <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
                 name="{{ field.name }}" class="textinput textInput form-control" placeholder="Enter {{ field.label }}"
                 id="id_{{ field.name }}" required>
             <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
             {% if form.errors %}
-            {% for error_message in field.errors %}
-            <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
-            {% endfor %}
+                {% for error_message in field.errors %}
+                    <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
+                {% endfor %}
             {% endif %}
         </div>
         {% endfor %}
-        <div class="col-12 text-center form-group">
-            <button class="btn btn-lg btn-outline-info" type="submit">Sign In</button>
+        <div class="form-check col-12 ms-3">
+            <input type="checkbox" class="form-check-input" id="dropdownCheck2">
+            <label class="form-check-label" for="dropdownCheck2">
+                Remember me
+            </label>
+        </div>
+        <div class="col-12 text-center form-group pb-3">
+            <button class="btn btn-lg btn-primary" type="submit">Sign In</button>
         </div>
     </form>
     <div class="border-top pt-1 text-center">

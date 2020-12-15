@@ -8,7 +8,12 @@ from django.views.generic import (
 from django.contrib.auth import login, authenticate, logout
 from django.utils.translation import ugettext_lazy as _
 from .models import CustomUser
-from .forms import UserRegisterForm, UserLoginForm
+from .forms import (
+    UserRegisterForm,
+    UserLoginForm,
+    UserUpdateForm,
+    ProfileUpdateForm
+)
 
 
 class UserCreateView(SuccessMessageMixin, CreateView):
@@ -22,13 +27,15 @@ class UserCreateView(SuccessMessageMixin, CreateView):
 class UserLogInView(FormView):
     form_class = UserLoginForm
     template_name = 'user/login_form.html'
-    success_url = 'home'
+    success_url = '/home/'
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Assign request to get method or post method, first method been called.
+        """
         if request.user.is_authenticated:
             return redirect('home')
-        else:
-            super().get(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """ process user login"""
@@ -39,7 +46,7 @@ class UserLogInView(FormView):
             login(self.request, user)
             messages.success(self.request, _(
                 f"Hi {credentials['username']}. Welcome back !"))
-            return redirect(self.success_url)
+            return super().form_valid(form)
         else:
             messages.warning(self.request, _('Log in failed. \
                                 please try again'))
@@ -49,3 +56,26 @@ class UserLogInView(FormView):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+def ProfileView(request):
+    if request.POST:
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(
+            request.POST, request.FILES, instance=request.user)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, _('Your account has been updated !'))
+            return redirect('profile')
+    else:
+        if request.user.is_authenticated:
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = ProfileUpdateForm(request.POST, instance=request.user)
+            context = {
+                'u_form': u_form,
+                'p_form': p_form
+            }
+            return render(request, 'user/profile.html', context)
+        else:
+            return redirect('login')
