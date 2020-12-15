@@ -58,18 +58,20 @@ a:focus {
 }
 
 #sidebar {
-    position: -webkit-sticky; /* Safari */
+    position: -webkit-sticky;
+    /* Safari */
     position: sticky;
+    /* position:fixed; */
     top: 50px;
     min-width: 250px;
+    height : 100vh;
     max-width: 250px;
-    height: 100vh;
     background: #b1bce6;
     color: #fff;
     transition: all 0.3s;
 }
 
-
+/* height: 100vh; */
 
 #sidebar.active {
     margin-left: -250px;

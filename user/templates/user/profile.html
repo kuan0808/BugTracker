@@ -42,10 +42,9 @@
         background: white;
         color: blue;
     }
-
-    .image-upload>input {
+    {% comment %} .image-upload>input {
         display: none;
-    }
+    } {% endcomment %}
 </style>
 <h2 class="text-center mt-2 p-0">My Profile</h2>
 <div class="container-fluid text-center">
@@ -53,14 +52,18 @@
     <div class="col-md-8 offset-md-2">
         <form method="POST" enctype="multipart/form-data" class="form-row g-1">
             {% csrf_token %}
-            <div class="col-6 offset-3 mt-3 mb-4 text-center image-upload">
+            <div class="col-6 offset-3 mt-3 mb-4 text-center">
                 <div class="wrap">
                     <img src="{{ user.profile.image.url }}" class="main-profile-img" />
-                    <button class="edit-button" for="id_image"><i class="fas fa-edit"></i></button>
+                    <label class="edit-button image-upload p-1" for="id_image">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="img-fluid bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                        </svg>
+                        <input type="file" name="image" accept="image/*" id="id_image">
+                    </label>
                 </div>
-                <input type="file" name="image" accept="image/*" id="id_image">
             </div>
-            {% comment %} <div class="col-sm-8 offset-sm-2"> {% endcomment %}
                 {% for field in u_form %}
                     {% if field.name == 'last_name' %}
                         <div class="col-5 form-group mb-4">
@@ -71,9 +74,9 @@
                     {% endif %}
                     <input {% if field.name == 'password' %} type="password" {% else %} type="text" {% endif %}
                         name="{{ field.name }}" class="textinput textInput form-control profile-form"
-                        placeholder="{{ field.label }}" id="id_{{ field.name }}" required>
+                        placeholder="{{ field.label }}" id="id_{{ field.name }}">
                     <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
-                    {% if form.errors %}
+                    {% if u_form.errors %}
                         {% for error_message in field.errors %}
                             <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
                         {% endfor %}
@@ -87,19 +90,4 @@
     </div>
 </div>
 </div>
-<h2>Collapsible Sidebar Using Bootstrap 4</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-            <div class="line"></div>
-
-            <h2>Lorem Ipsum Dolor</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-            <div class="line"></div>
-
-            <h2>Lorem Ipsum Dolor</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-            <div class="line"></div>
-    {% endblock content %}
+{% endblock content %}

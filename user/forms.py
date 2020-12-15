@@ -102,6 +102,14 @@ class UserUpdateForm(forms.ModelForm):
             'first_name': _('First Name'),
             'last_name': _('Last Name')
         }
+        error_messages = {
+            'username': {
+                'unique': _("Username has been used.")
+            },
+            'email': {
+                'unique': _('Email has been used.')
+            },
+        }
 
 
 class ProfileUpdateForm(forms.ModelForm):

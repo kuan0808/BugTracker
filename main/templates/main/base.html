@@ -12,6 +12,10 @@
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
         integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Bootstrap5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="{% static 'main/base.css' %}">
 
@@ -60,17 +64,19 @@
                 <img src="{% static 'main/bug.png' %}" alt="Bug" style="width: 35px; height:35px;">
             </a>
             <!-- Navbar logo -->
+            <!-- Navbar Toggle -->
             <div class="w-100 text-right my-1">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
                     aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
+            <!-- Navbar Toggle -->
         </div>
         <div class="collapse navbar-collapse flex-grow-1 text-right mr-4" id="navbarTogglerDemo03">
             <ul class="navbar-nav ml-auto flex-nowrap">
                 <li class="nav-item">
-                    <a href="#" class="nav-link menu-item p-0 align-self-center">
+                    <a href="#" class="nav-link menu-item pt-2 align-self-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                             class="bi bi-bell-fill" viewBox="0 0 16 16">
                             <path
@@ -145,7 +151,16 @@
             </ul>
         </nav>
         <div id="content">
-            {% block content %}{% endblock %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-dismissible fade show text-center
+            {% if message.tags == 'error' %}bg-danger {% else %}bg-success{% endif %}" role="alert">
+              <strong class="text-white">{{ message }}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
 
         </div>
     </div>

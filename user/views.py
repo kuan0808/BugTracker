@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+
+from django.contrib.auth import login, authenticate, logout
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.decorators import login_required
 from django.views.generic import (
     CreateView,
     FormView
 )
-from django.contrib.auth import login, authenticate, logout
-from django.utils.translation import ugettext_lazy as _
 from .models import CustomUser
 from .forms import (
     UserRegisterForm,
@@ -58,24 +60,27 @@ def logout_view(request):
     return redirect('login')
 
 
+@login_required
 def ProfileView(request):
-    if request.POST:
-        u_form = UserUpdateForm(request.POST, instance=request.user)
+    user_data = request.POST or None
+    profile_data = request.FILES or None
+    if request.method == 'POST':
+        u_form = UserUpdateForm(user_data, instance=request.user)
         p_form = ProfileUpdateForm(
-            request.POST, request.FILES, instance=request.user)
+            user_data, profile_data, instance=request.user)
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
             messages.success(request, _('Your account has been updated !'))
             return redirect('profile')
-    else:
-        if request.user.is_authenticated:
-            u_form = UserUpdateForm(request.POST, instance=request.user)
-            p_form = ProfileUpdateForm(request.POST, instance=request.user)
-            context = {
-                'u_form': u_form,
-                'p_form': p_form
-            }
-            return render(request, 'user/profile.html', context)
         else:
-            return redirect('login')
+            messages.error(request, _('Update profile faild !'))
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user)
+        context = {
+            'u_form': u_form,
+            'p_form': p_form
+        }
+        return render(request, 'user/profile.html', context)
