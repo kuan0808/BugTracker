@@ -62,12 +62,12 @@ def logout_view(request):
 
 @login_required
 def ProfileView(request):
-    user_data = request.POST or None
-    profile_data = request.FILES or None
+    user_data = request.POST
+    profile_data = request.FILES
     if request.method == 'POST':
         u_form = UserUpdateForm(user_data, instance=request.user)
         p_form = ProfileUpdateForm(
-            user_data, profile_data, instance=request.user)
+            user_data, profile_data, instance=request.user.profile)
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -75,10 +75,15 @@ def ProfileView(request):
             return redirect('profile')
         else:
             messages.error(request, _('Update profile faild !'))
+            if u_form.errors:
+                for field in u_form:
+                    if field.errors:
+                        for error_message in field.errors:
+                            print(f'{field}: {error_message}')
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
         context = {
             'u_form': u_form,
             'p_form': p_form

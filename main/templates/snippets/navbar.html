@@ -1,50 +1,51 @@
-<!-- navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-light m-0 p-1" style="background-color: #b1bce6;">
-        <div class="d-flex flex-grow-1">
-            <a class="navbar-brand d-none d-lg-inline-block ml-5" href="#">
-                <img src="{% static 'main/bug.png' %}" alt="Bug" style="width: 35px; height:35px;">
-                Bug Tracker
-            </a>
 
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-dark d-inline-block d-lg-none mx-3 my-1" style="background-color: #37426f;" type="button" id="sidebarCollapse">
+
+<link rel="stylesheet" href="{% static 'main/base.css' %}">
+
+
+<nav class="navbar navbar-expand-lg sticky-top nav-color m-0 p-1">
+    <div class="d-flex flex-grow-1">
+        <a class="navbar-brand d-none d-lg-inline-block ml-5" href="#">
+            <img src="{% static 'main/bug.png' %}" alt="Brand" style="width: 35px; height:35px;">
+            Bug Tracker
+        </a>
+
+        <!-- Navbar logo -->
+        <a class="navbar-brand-two mr-auto d-lg-none d-inline-block  mt-1 ml-2" href="#">
+            <img src="{% static 'main/bug.png' %}" alt="Brand">
+            Bug Tracker
+        </a>
+        <!-- Navbar logo -->
+        <!-- Navbar Toggle -->
+        <div class="text-center my-1">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-align-justify"></i>
             </button>
-            <!-- Sidebar Toggle-->
-
-            <!-- Navbar logo -->
-            <a class="navbar-brand-two mx-auto d-lg-none d-inline-block  mt-1 ml-2" href="#">
-                <img src="{% static 'main/bug.png' %}" alt="Bug" style="width: 35px; height:35px;">
-            </a>
-            <!-- Navbar logo -->
-            <div class="w-100 text-right my-1">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
-                    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
         </div>
-        <div class="collapse navbar-collapse flex-grow-1 text-right mr-4" id="navbarTogglerDemo03">
-            <ul class="navbar-nav ml-auto flex-nowrap">
-                <li class="nav-item">
-                    <a href="#" class="nav-link menu-item p-0 align-self-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                            class="bi bi-bell-fill" viewBox="0 0 16 16">
-                            <path
-                                d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-                        </svg>
-                        <span class="badge bg-secondary">9</span>
-                    </a>
-                </li>
-                <!-- <li class="nav-item">
-                        <a href="#" class="nav-link m-2 menu-item">How We Help</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link m-2 menu-item">Blog</a>
-                    </li> -->
-                <li class="nav-item">
-                    <a href="#" class="nav-link menu-item ml-3 p-2">Log Out</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        <!-- Navbar Toggle -->
+    </div>
+    <div class="collapse navbar-collapse text-right mr-4" id="navbarTogglerDemo03">
+        <ul class="navbar-nav ml-auto flex-nowrap">
+            <li class="nav-item">
+                <a href="#" class="nav-link menu-item pt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                        class="bi bi-bell-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
+                    </svg>
+                    <span class="badge bg-secondary">9</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link menu-item ml-3 p-2">Change Password</a>
+            </li>
+            {% comment %} <li class="nav-item">
+                <a href="#" class="nav-link m-2 menu-item">Blog</a>
+            </li> {% endcomment %}
+            <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link menu-item ml-3 p-2">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</nav>

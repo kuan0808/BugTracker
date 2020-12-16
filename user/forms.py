@@ -86,29 +86,24 @@ class UserLoginForm(forms.Form):
             self.add_error('username', error)
 
         if invalid:
-            error = ValidationError(message="Invalid username and password !",
+            error = ValidationError(message="Invalid username!",
                                     code='invalid')
-            self.add_error('password', error)
             self.add_error('username', error)
         return cleaned_data
 
 
 class UserUpdateForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data['username']
+
     class Meta:
         model = get_user_model()
         fields = ('username', 'first_name', 'last_name', 'email')
         labels = {
             'email': _('Email Address'),
             'first_name': _('First Name'),
-            'last_name': _('Last Name')
-        }
-        error_messages = {
-            'username': {
-                'unique': _("Username has been used.")
-            },
-            'email': {
-                'unique': _('Email has been used.')
-            },
+            'last_name': _('Last Name'),
         }
 
 

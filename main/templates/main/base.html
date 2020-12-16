@@ -15,10 +15,6 @@
 
     <!-- Bootstrap5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
-    <!-- Our Custom CSS -->
-    <link rel="stylesheet" href="{% static 'main/base.css' %}">
-
     <!-- Font Awesome JS -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
         integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
@@ -26,145 +22,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
         integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
         crossorigin="anonymous"></script>
-</head>
-
-{% comment %} <button type="button" id="sidebarCollapse" class="btn btn-info">
-    <i class="fas fa-align-left"></i>
-    <span>Toggle Sidebar</span>
-</button>
-<button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
-    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-    aria-label="Toggle navigation">
-    <i class="fas fa-align-justify"></i>
-</button> {% endcomment %}
-
-<body>
-
-    <!-- navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-light m-0 p-1" style="background-color: #b1bce6;">
-        <div class="d-flex flex-grow-1">
-            <a class="navbar-brand d-none d-lg-inline-block ml-5" href="#">
-                {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#37426f"
-                    class="bi bi-bug-fill align-self-center" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd"
-                        d="M4.978.855a.5.5 0 1 0-.956.29l.41 1.352A4.985 4.985 0 0 0 3 6h10a4.985 4.985 0 0 0-1.432-3.503l.41-1.352a.5.5 0 1 0-.956-.29l-.291.956A4.978 4.978 0 0 0 8 1a4.979 4.979 0 0 0-2.731.811l-.29-.956zM13 6v1H8.5v8.975A5 5 0 0 0 13 11h.5a.5.5 0 0 1 .5.5v.5a.5.5 0 1 0 1 0v-.5a1.5 1.5 0 0 0-1.5-1.5H13V9h1.5a.5.5 0 0 0 0-1H13V7h.5A1.5 1.5 0 0 0 15 5.5V5a.5.5 0 0 0-1 0v.5a.5.5 0 0 1-.5.5H13zm-5.5 9.975V7H3V6h-.5a.5.5 0 0 1-.5-.5V5a.5.5 0 0 0-1 0v.5A1.5 1.5 0 0 0 2.5 7H3v1H1.5a.5.5 0 0 0 0 1H3v1h-.5A1.5 1.5 0 0 0 1 11.5v.5a.5.5 0 1 0 1 0v-.5a.5.5 0 0 1 .5-.5H3a5 5 0 0 0 4.5 4.975z" />
-                </svg> {% endcomment %}
-                <img src="{% static 'main/bug.png' %}" alt="Bug" style="width: 35px; height:35px;">
-                Bug Tracker
-            </a>
-
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-dark d-inline-block d-lg-none mx-3 my-1" style="background-color: #37426f;" type="button" id="sidebarCollapse">
-                <i class="fas fa-align-justify"></i>
-            </button>
-            <!-- Sidebar Toggle-->
-
-            <!-- Navbar logo -->
-            <a class="navbar-brand-two mx-auto d-lg-none d-inline-block  mt-1 ml-2" href="#">
-                <img src="{% static 'main/bug.png' %}" alt="Bug" style="width: 35px; height:35px;">
-            </a>
-            <!-- Navbar logo -->
-            <!-- Navbar Toggle -->
-            <div class="w-100 text-right my-1">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
-                    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-            <!-- Navbar Toggle -->
-        </div>
-        <div class="collapse navbar-collapse flex-grow-1 text-right mr-4" id="navbarTogglerDemo03">
-            <ul class="navbar-nav ml-auto flex-nowrap">
-                <li class="nav-item">
-                    <a href="#" class="nav-link menu-item pt-2 align-self-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                            class="bi bi-bell-fill" viewBox="0 0 16 16">
-                            <path
-                                d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-                        </svg>
-                        <span class="badge bg-secondary">9</span>
-                    </a>
-                </li>
-                <!-- <li class="nav-item">
-                        <a href="#" class="nav-link m-2 menu-item">How We Help</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link m-2 menu-item">Blog</a>
-                    </li> -->
-                <li class="nav-item">
-                    <a href="#" class="nav-link menu-item ml-3 p-2">Log Out</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!-- Sidebar -->
-    <div class="d-flex w-100 align-items-stretch">
-        <nav id="sidebar">
-            <a href="{% url 'profile' %}">
-                <div class="sidebar-header text-center">
-                    <img src="{{ user.profile.image.url }}" alt="Profile Image" class="avatar">
-                    <div class="mt-2">
-                        <p>Welcome, <strong>{{ user.username }}</strong></p>
-                    </div>
-                </div>
-            </a>
-            <ul class="list-unstyled components pt-0">
-                <li class="active">
-                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
-                        class="dropdown-toggle">Dashboard</a>
-                    <ul class="collapse list-unstyled" id="homeSubmenu">
-                        <li>
-                            <a href="#">Home 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Home 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Home 3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">My Projects</a>
-                </li>
-                <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My
-                        Tickets</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">Page 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Profile</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
-            </ul>
-        </nav>
-        <div id="content">
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-dismissible fade show text-center
-            {% if message.tags == 'error' %}bg-danger {% else %}bg-success{% endif %}" role="alert">
-              <strong class="text-white">{{ message }}</strong>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
-        {% block content %}{% endblock %}
-
-        </div>
-    </div>
-
     <!-- Option 1: Bootstrap Bundle with Popper (for navbar)-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
@@ -182,12 +39,168 @@
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
 
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{% static 'main/base.css' %}">
+</head>
+
+<body>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top nav-color m-0 p-1">
+        <div class="d-flex flex-grow-1">
+            <a class="navbar-brand d-none d-lg-inline-block ml-5" href="#">
+                <img src="{% static 'main/bug.png' %}" alt="Brand" style="width: 35px; height:35px;">
+                Bug Tracker
+            </a>
+
+            <!-- Navbar logo -->
+            <a class="navbar-brand-two mr-auto d-lg-none d-inline-block  mt-1 ml-2" href="#">
+                <img src="{% static 'main/bug.png' %}" alt="Brand">
+                Bug Tracker
+            </a>
+            <!-- Navbar logo -->
+            <!-- Navbar Toggle -->
+            <div class="text-center my-1">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+            </div>
+            <!-- Navbar Toggle -->
+        </div>
+        <div class="collapse navbar-collapse text-right mr-4" id="navbarTogglerDemo03">
+            <ul class="navbar-nav ml-auto flex-nowrap">
+                <li class="nav-item">
+                    <a href="#" class="nav-link menu-item pt-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                            class="bi bi-bell-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
+                        </svg>
+                        <span class="badge bg-secondary">9</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link menu-item ml-3 p-2">Change Password</a>
+                </li>
+                {% comment %} <li class="nav-item">
+                    <a href="#" class="nav-link m-2 menu-item">Blog</a>
+                </li> {% endcomment %}
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}" class="nav-link menu-item ml-3 p-2">Log Out</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <!-- Sidebar close button -->
+        <button type="button" id="close-side" onclick="closeSide()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <!-- Sidebar close button -->
+
+        <!-- Sidebar Open button-->
+        <div id="open-side">
+            <button type="button" class="btn" onclick="openSide()">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        <!-- Sidebar Open button-->
+
+        <div class="sidebar-header text-center">
+            <a href="{% url 'profile' %}">
+                <img src="{{ user.profile.image.url }}" alt="Profile Image" class="sidebar-avatar">
+            </a>
+                <div class="mt-2">
+                    <p>Welcome, <strong>{{ user.username }}</strong></p>
+                </div>
+        </div>
+
+        <ul class="list-unstyled components pt-0">
+            <li class="active">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
+                    class="dropdown-toggle">Dashboard</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                        <a href="#">Home 1</a>
+                    </li>
+                    <li>
+                        <a href="#">Home 2</a>
+                    </li>
+                    <li>
+                        <a href="#">Home 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">My Projects</a>
+            </li>
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My
+                    Tickets</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="#">Page 1</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 2</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Profile</a>
+            </li>
+            <li>
+                <a href="#">Contact</a>
+            </li>
+        </ul>
+    </nav>
+    <div id="content">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible fade show text-center
+        {% if message.tags == 'error' %}bg-danger {% else %}bg-success{% endif %}" role="alert">
+            <strong class="text-white">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+    </div>
+    <div id="overlay"></div>
+
+
+
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-            });
-        });
+        function openSide() {
+            var w = window.innerWidth;
+			document.getElementById(
+				"sidebar").style.marginLeft = "0px";
+			document.getElementById(
+				"content").style.marginLeft = "250px";
+            document.getElementById(
+				"open-side").style.display = "none";
+            if (w <= 960) {
+                document.getElementById(
+				"overlay").classList.add("active");
+                document.getElementById(
+				"content").style.marginLeft = "0px";
+		    }
+        }
+		function closeSide() {
+			document.getElementById(
+				"sidebar").style.marginLeft = "-250px";
+			document.getElementById(
+				"content").style.marginLeft = "0px";
+            document.getElementById(
+				"open-side").style.display = "block";
+            document.getElementById(
+				"overlay").classList.remove("active");
+		}
     </script>
 </body>
 

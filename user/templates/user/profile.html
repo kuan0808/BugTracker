@@ -13,11 +13,11 @@
         max-width: 600px;
     }
 
-    .profile-form {
+    .form-input {
         border-radius: 20px;
     }
 
-    .main-profile-img {
+    #main-profile-img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
@@ -33,20 +33,25 @@
 
     .edit-button {
         position: absolute;
+        display: block;
+        vertical-align: center;
+        overflow: hidden;
         width: 20%;
         height: 20%;
         border-radius: 50%;
-        border: 1px solid grey;
+        border: 1px solid green;
         top: 0;
         left: 70%;
         background: white;
-        color: blue;
+        color: green;
+        cursor: pointer;
     }
-    {% comment %} .image-upload>input {
+    .image-upload>input {
         display: none;
-    } {% endcomment %}
+    }
 </style>
-<h2 class="text-center mt-2 p-0">My Profile</h2>
+
+<h2 class="text-center mt-4 p-0">My Profile</h2>
 <div class="container-fluid text-center">
 <div class="row pt-2 mx-auto mt-4 profile-card">
     <div class="col-md-8 offset-md-2">
@@ -54,13 +59,14 @@
             {% csrf_token %}
             <div class="col-6 offset-3 mt-3 mb-4 text-center">
                 <div class="wrap">
-                    <img src="{{ user.profile.image.url }}" class="main-profile-img" />
-                    <label class="edit-button image-upload p-1" for="id_image">
+                    <img src="{{ user.profile.image.url }}" id="main-profile-img" />
+                    <label class="edit-button image-upload" for="id_image">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="img-fluid bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                         </svg>
-                        <input type="file" name="image" accept="image/*" id="id_image">
+                        <input type="file" name="image" accept="image/*" id="id_image"
+                        onchange="document.getElementById('main-profile-img').src = window.URL.createObjectURL(this.files[0])">">
                     </label>
                 </div>
             </div>
@@ -72,19 +78,28 @@
                     {% else %}
                         <div class="col-12 form-group mb-4">
                     {% endif %}
-                    <input {% if field.name == 'password' %} type="password" {% else %} type="text" {% endif %}
-                        name="{{ field.name }}" class="textinput textInput form-control profile-form"
+                    <input type="text"
+                        name="{{ field.name }}" class="textinput textInput form-control form-input"
+                        {% if field.name == 'username' %}
+                        value="{{ user.username }}"
+                        {% elif field.name == 'first_name' %}
+                        value="{{ user.first_name }}"
+                        {% elif field.name == 'last_name' %}
+                        value="{{ user.last_name }}"
+                        {% else %}
+                        value="{{ user.email }}"
+                        {% endif %}
                         placeholder="{{ field.label }}" id="id_{{ field.name }}">
                     <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
                     {% if u_form.errors %}
                         {% for error_message in field.errors %}
-                            <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
+                            <p class="invalid-feedback d-block"> <strong>{{ error_message| striptags }}</strong></p>
                         {% endfor %}
                     {% endif %}
                         </div>
                 {% endfor %}
                 <div class="col-12 form-group text-center pb-3">
-                    <button class="btn btn-lg btn-primary" type="submit">Save Profile</button>
+                    <button class="btn btn-lg btn-color" type="submit">Update Profile</button>
                 </div>
         </form>
     </div>
