@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% block content %}
-<div class="col-6 offset-3 form-card my-auto px-3 py-3">
+<div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 form-card">
     <form method="POST" class="row row-no-gutters">
         {% csrf_token %}
         <div class="col-12 form-card-brand">
@@ -11,25 +11,27 @@
         </div>
         {% for field in form %}
             {% if field.name == 'password' %}
-            <div class="col-12 form-group pb-3 password-form">
+            <div class="col-12 form-group pb-3">
             {% else %}
             <div class="col-12 form-group pb-3">
             {% endif %}
             {{ field.label_tag }}
-            <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
-                name="{{ field.name }}" class="textinput textInput form-control form-input" placeholder="Enter {{ field.label }}"
-                id="id_{{ field.name }}" required>
+            <div class="password-field">
+                <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
+                    name="{{ field.name }}" class="textinput textInput form-control form-input" placeholder="Enter {{ field.label }}"
+                    id="id_{{ field.name }}" required>
+                    {% if field.name == 'password' %}
+                        <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
+                        <a class="link-bl form-input-text" href="#">Forget password ?</a>
+                    {% endif %}
+            </div>
             <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
             {% if form.errors %}
                 {% for error_message in field.errors %}
                     <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
                 {% endfor %}
             {% endif %}
-            {% if field.name == 'password' %}
-                <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
-                <a class="link-bl form-input-text" href="#">Forget password ?</a>
-            {% endif %}
-        </div>
+            </div>
         {% endfor %}
         <div class="form-check col-12 ms-3">
             <input type="checkbox" class="form-check-input" id="dropdownCheck2">

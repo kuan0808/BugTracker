@@ -19,7 +19,7 @@ html, body {
 
 }
 
-p, label{
+p label{
     font-family: 'Poppins', sans-serif;
     font-size: 1.1em;
     font-weight: 300;
@@ -56,10 +56,8 @@ a:focus {
     background: #fff;
     border-radius: 25px;
     max-width: 480px;
-    min-width: 400px;
     color: #37426f;
-    padding: 10px;
-    padding-top: 10px;
+    padding: 20px;
     margin: auto;
 }
 .form-card-brand {
@@ -83,19 +81,20 @@ a:focus {
 .form-input-text {
     position:absolute;
     display: block;
-    top: 80%;
-    right: 15px;
+    top: 105%;
+    right: 0px;
     font-size: 0.5rem;
 }
 
-.password-form {
+.password-field {
     position: relative;
 }
 
 .togglePassword {
     position:absolute;
     display: block;
-    top: 35%;
+    top: 50%;
+    transform: translateY(-50%);
     right: 20px;
     width: 30px;
     height:30px;
@@ -289,3 +288,4 @@ ul ul a {
     #content {
         margin-left: 0px;
     }
+}
