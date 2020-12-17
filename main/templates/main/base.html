@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 
@@ -7,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Bug Tracker</title>
+    <title>{% trans "Bug Tracker" %}</title>
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
@@ -49,13 +50,13 @@
         <div class="d-flex flex-grow-1">
             <a class="navbar-brand d-none d-lg-inline-block ml-5" href="#">
                 <img src="{% static 'main/bug.png' %}" alt="Brand" style="width: 35px; height:35px;">
-                Bug Tracker
+                {% trans "Bug Tracker" %}
             </a>
 
             <!-- Navbar logo -->
             <a class="navbar-brand-two mr-auto d-lg-none d-inline-block  mt-1 ml-2" href="#">
                 <img src="{% static 'main/bug.png' %}" alt="Brand">
-                Bug Tracker
+                {% trans "Bug Tracker" %}
             </a>
             <!-- Navbar logo -->
             <!-- Navbar Toggle -->
@@ -80,13 +81,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link menu-item ml-3 p-2">Change Password</a>
+                    <a href="#" class="nav-link menu-item ml-3 p-2">{% trans "Change Password" %}</a>
                 </li>
                 {% comment %} <li class="nav-item">
                     <a href="#" class="nav-link m-2 menu-item">Blog</a>
                 </li> {% endcomment %}
                 <li class="nav-item">
-                    <a href="{% url 'logout' %}" class="nav-link menu-item ml-3 p-2">Log Out</a>
+                    <a href="{% url 'logout' %}" class="nav-link menu-item ml-3 p-2">{% trans "Log Out" %}</a>
                 </li>
             </ul>
         </div>
@@ -113,14 +114,14 @@
                 <img src="{{ user.profile.image.url }}" alt="Profile Image" class="sidebar-avatar">
             </a>
                 <div class="mt-2">
-                    <p>Welcome, <strong>{{ user.username }}</strong></p>
+                    <p>{% trans "Welcome, " %}<strong>{% trans user.username %}</strong></p>
                 </div>
         </div>
 
         <ul class="list-unstyled components pt-0">
-            <li class="active">
+            <li>
                 <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
-                    class="dropdown-toggle">Dashboard</a>
+                    class="dropdown-toggle">{% trans "Dashboard" %}</a>
                 <ul class="collapse list-unstyled" id="homeSubmenu">
                     <li>
                         <a href="#">Home 1</a>
@@ -134,7 +135,7 @@
                 </ul>
             </li>
             <li>
-                <a href="#">My Projects</a>
+                <a href="#" id="myprojects">{% trans "My Projects" %}</a>
             </li>
             <li>
                 <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My
@@ -151,8 +152,8 @@
                     </li>
                 </ul>
             </li>
-            <li>
-                <a href="#">Profile</a>
+            <li id="profile">
+                <a href="#">{% trans "Profile" %}</a>
             </li>
             <li>
                 <a href="#">Contact</a>
@@ -201,6 +202,17 @@
             document.getElementById(
 				"overlay").classList.remove("active");
 		}
+        function windowSizeCheck() {
+            var w = window.innerWidth;
+            var x = document.getElementById("sidebar");
+            if (w <= 960 && x.style.marginLeft == "0px") {
+                document.getElementById(
+				"overlay").classList.add("active");
+                document.getElementById(
+				"content").style.marginLeft = "0px";
+            }
+        }
+        window.onresize = windowSizeCheck;
     </script>
 </body>
 

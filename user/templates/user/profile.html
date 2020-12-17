@@ -3,47 +3,54 @@
 {% block content %}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 <style>
-    p, label, h2{
-        color: #fff;
-    }
-
-    .profile-card {
-        background: #fff;
-        border-radius: 25px;
-        max-width: 600px;
-    }
-
-    .form-input {
-        border-radius: 20px;
-    }
-
-    #main-profile-img {
+    {% comment %} /* ---------------------------------------------------
+    IMPORTANT TECHNIQUE TO MAKE A SQUARE BOX AND CENTER THE IMAGE
+    ----------------------------------------------------- */ {% endcomment %}
+    .profile-img-box {
         width: 100%;
-        height: 100%;
+        padding-bottom: 100%;     {% comment %} The padding bottom is base on the container's width!! {% endcomment %}
         border-radius: 50%;
-        border-style: solid;
-        border-color: #FFFFFF;
-        box-shadow: 0 0 8px 3px #B8B8B8;
+        border: 4px solid #37426f;
+        box-shadow: 0 0 8px #37426f;
         position: relative;
+        overflow: hidden;
     }
-
-    .wrap {
-        position: relative;
+    .profile-img-inner {
+        position: absolute;
+        margin: 0px;
+        padding: 0px;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        height: 100%;
+        background-color: black;
+        overflow: hidden;
     }
-
+    .profile-img-inner img,
+    label>svg {
+        display: block;
+        position: absolute;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        object-fit: fill;
+        transform: translate(-50%, -50%);
+    }
+    {% comment %} /* ---------------------------------------------------
+        IMPORTANT TECHNIQUE TO MAKE A SQUARE BOX AND CENTER THE IMAGE
+        ----------------------------------------------------- */ {% endcomment %}
     .edit-button {
         position: absolute;
         display: block;
-        vertical-align: center;
         overflow: hidden;
         width: 20%;
         height: 20%;
         border-radius: 50%;
-        border: 1px solid green;
+        border: 1px solid #b1bce6;
         top: 0;
         left: 70%;
-        background: white;
-        color: green;
+        background: #b1bce6;
         cursor: pointer;
     }
     .image-upload>input {
@@ -51,32 +58,34 @@
     }
 </style>
 
-<h2 class="text-center mt-4 p-0">My Profile</h2>
+<h2 class="text-center mt-4 p-0">{% trans "My Profile" %}</h2>
 <div class="container-fluid text-center">
-<div class="row pt-2 mx-auto mt-4 profile-card">
+<div class="row pt-2 mx-auto mt-4 form-card">
     <div class="col-md-8 offset-md-2">
         <form method="POST" enctype="multipart/form-data" class="form-row g-1">
             {% csrf_token %}
-            <div class="col-6 offset-3 mt-3 mb-4 text-center">
-                <div class="wrap">
-                    <img src="{{ user.profile.image.url }}" id="main-profile-img" />
-                    <label class="edit-button image-upload" for="id_image">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="img-fluid bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                        </svg>
-                        <input type="file" name="image" accept="image/*" id="id_image"
-                        onchange="document.getElementById('main-profile-img').src = window.URL.createObjectURL(this.files[0])">">
-                    </label>
+            <div class="col-6 offset-3 mt-3 text-center">
+                <div class="profile-img-box">
+                    <div class="profile-img-inner">
+                        <img src="{{ user.profile.image.url }}" id="profile-img" />
+                    </div>
                 </div>
+                <label class="edit-button image-upload" for="id_image">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                    </svg>
+                    <input type="file" name="image" accept="image/*" id="id_image"
+                    onchange="showImage(this); showAlert();">
+                </label>
             </div>
                 {% for field in u_form %}
                     {% if field.name == 'last_name' %}
-                        <div class="col-5 form-group mb-4">
+                        <div class="col-5 form-group mb-2 mt-4">
                     {% elif field.name == 'first_name' %}
-                        <div class="col-7 form-group mb-4">
+                        <div class="col-7 form-group mb-2 mt-4">
                     {% else %}
-                        <div class="col-12 form-group mb-4">
+                        <div class="col-12 form-group mb-2 mt-4">
                     {% endif %}
                     <input type="text"
                         name="{{ field.name }}" class="textinput textInput form-control form-input"
@@ -89,7 +98,8 @@
                         {% else %}
                         value="{{ user.email }}"
                         {% endif %}
-                        placeholder="{{ field.label }}" id="id_{{ field.name }}">
+                        placeholder="{{ field.label }}" id="id_{{ field.name }}"
+                        onchange="showAlert()">
                     <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
                     {% if u_form.errors %}
                         {% for error_message in field.errors %}
@@ -98,11 +108,28 @@
                     {% endif %}
                         </div>
                 {% endfor %}
-                <div class="col-12 form-group text-center pb-3">
-                    <button class="btn btn-lg btn-color" type="submit">Update Profile</button>
+                <div class="invalid-feedback text-center m-0 mb-1" id="alert-str">
+                    <strong>{% trans "Notice : Press the button below to apply." %}</strong>
+                </div>
+                <div class="col-12 form-group text-center my-4">
+                    <button class="btn btn-lg custom-btn" type="submit">{% trans "Update Profile" %}</button>
                 </div>
         </form>
     </div>
 </div>
 </div>
+
+<script type="text/javascript">
+    function functionProfile(){
+        document.getElementById("profile").classList.add("active");
+    }
+    function showAlert(){
+        var alert_str = document.getElementById('alert-str');
+        alert_str.classList.add('d-block');
+    }
+    function showImage(element){
+        document.getElementById('profile-img').src = window.URL.createObjectURL(element.files[0]);
+    }
+    window.onload = functionProfile;
+</script>
 {% endblock content %}

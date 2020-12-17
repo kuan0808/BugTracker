@@ -1,19 +1,22 @@
 {% extends 'user/user_base.html' %}
+{% load static %}
 {% load i18n %}
 {% block content %}
-<div class="col-sm-6 offset-sm-3 col-md-6 offset-md-3 ">
-    <!--    <div class="content-section">-->
+<div class="col-6 offset-3 form-card px-4">
     <form method="POST" class="row">
         {% csrf_token %}
-        <div class="col-12">
-            <legend class="border-bottom pb-2 mb-2 text-uppercase font-weight-bolder text-center">
-                {% translate 'Register' %}</legend>
+        <div class="col-12 form-card-brand">
+            <legend class="brand-title mb-2 text-center">
+                {% trans "Bug Tracker" %}
+                <img src="{% static 'main/bug.png' %}" alt="Brand"></legend>
         </div>
         {% for field in form %}
-            {% if field.name != 'first_name' and field.name != 'last_name' %}
-                <div class="col-12 form-group pb-3">
-            {% else %}
+            {% if field.name == 'password1' or field.name == 'password2' %}
+                <div class="col-12 form-group password-form pb-3">
+            {% elif field.name == 'first_name' or field.name == 'last_name' %}
                 <div class="col-6 form-group pb-3">
+            {% else %}
+                <div class="col-12 form-group pb-3">
             {% endif %}
                 {{ field.label_tag }}
                 <input
@@ -30,7 +33,7 @@
                     {% if field.value and field.name != 'password1' and field.name != 'password2' %}
                         value="{{ field.value }}"
                     {% endif %}
-                    class="textinput textInput form-control {% if field.errors %}invalid{% endif %}"
+                    class="textinput textInput form-control form-input {% if field.errors %}invalid{% endif %}"
                     id="id_{{ field.name }}" required>
                 {% if form.errors %}
                     {% for error_message in field.errors %}
@@ -39,17 +42,36 @@
                     <p class="invalid-feedback d-block"><strong>{{ error_message|striptags }}</strong></p>
                     {% endfor %}
                 {% endif %}
+                {% if field.name == 'password1' or field.name == 'password2' %}
+                <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
+                {% endif %}
+
             </div>
         {% endfor %}
         <div class="col-12 text-center form-group mb-3">
-            <button class="btn btn-lg btn-primary" type="submit">Sign Up</button>
+            <button class="btn btn-lg custom-btn" type="submit">Sign Up</button>
         </div>
     </form>
     <div class="border-top pt-1 text-center">
         <small class="text-muted">
-            Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+            Already Have An Account? <a class="link-bl ml-2" href="{% url 'login' %}">Sign In</a>
         </small>
     </div>
-    <!--    </div>-->
 </div>
+
+<script type="text/javascript">
+    function togglePassword(element){
+        var password_field_1 = document.getElementById('id_password1');
+        var password_field_2 = document.getElementById('id_password2');
+        if (element.id === "password1"){
+            let type_a = password_field_1.getAttribute('type') === 'password' ? 'text' : 'password';
+            password_field_1.setAttribute('type', type_a);
+        }else{
+            let type_b = password_field_2.getAttribute('type') === 'password' ? 'text' : 'password';
+            password_field_2.setAttribute('type', type_b);
+        }
+        element.classList.toggle('fa-eye-slash');
+        element.classList.toggle('fa-eye');
+    }
+</script>
 {% endblock %}

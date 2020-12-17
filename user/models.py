@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from .managers import CustomUserManager
+from PIL import Image
 
 
 class CustomUser(AbstractBaseUser):
@@ -27,7 +28,7 @@ class CustomUser(AbstractBaseUser):
 
     def get_full_name(self):
         """
-        #Returns the first_name plus the last_name, with a space in between.
+        # Returns the first_name plus the last_name, with a space in between.
         """
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
@@ -59,6 +60,28 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        def make_square(im, fill_color=(0, 0, 0, 0)):
+            x, y = im.size
+            size = min(x, y)
+            if x != y:
+                new_im = Image.new('RGBA', (size, size), fill_color)
+                new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
+                return new_im
+            return im
+        img = Image.open(self.image.path)
+        img = make_square(img)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            try:
+                img.save(self.image.path)
+            except:
+                img = img.convert("RGB")
+                img.save(self.image.path)
 
     class Meta:
         verbose_name = _('Profile')
