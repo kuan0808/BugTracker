@@ -21,22 +21,22 @@ from .forms import (
 class UserCreateView(SuccessMessageMixin, CreateView):
     model = CustomUser
     form_class = UserRegisterForm
-    template_name = 'user/register_form.html'
+    template_name = 'user/register.html'
     success_url = '/login/'
     success_message = _("User Created !")
 
 
 class UserLogInView(FormView):
     form_class = UserLoginForm
-    template_name = 'user/login_form.html'
-    success_url = '/home/'
+    template_name = 'user/login.html'
+    success_url = '/profile/'
 
     def dispatch(self, request, *args, **kwargs):
         """
         Assign request to get method or post method, first method been called.
         """
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('profile')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):

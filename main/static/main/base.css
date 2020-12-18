@@ -59,6 +59,9 @@ a:focus {
     color: #37426f;
     padding: 20px;
     margin: auto;
+    box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
+	-webkit-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
+	-moz-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
 }
 .form-card-brand {
     display: flex;
@@ -69,7 +72,7 @@ a:focus {
 .brand-title {
     padding: 0px;
     font-weight: 600;
-    font-size: 1.8rem;
+    font-size: 2rem;
     padding: 0.5rem 0 0.5rem 0;
     border-bottom: 2px solid #37426f;
 }

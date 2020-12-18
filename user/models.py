@@ -63,6 +63,8 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        if self.image.name == 'default.jpg':
+            return
 
         def make_square(im, fill_color=(0, 0, 0, 0)):
             x, y = im.size
@@ -77,6 +79,7 @@ class Profile(models.Model):
         if img.height > 300 or img.width > 300:
             output_size = (300, 300)
             img.thumbnail(output_size)
+            print(self.image.name)
             try:
                 img.save(self.image.path)
             except:
