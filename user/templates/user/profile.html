@@ -90,7 +90,7 @@
                     <input type="text"
                         name="{{ field.name }}" class="textinput textInput form-control form-input"
                         {% if field.name == 'username' %}
-                        value="{{ user.username }}"
+                        value="{{ form.instance.username }}"
                         {% elif field.name == 'first_name' %}
                         value="{{ user.first_name }}"
                         {% elif field.name == 'last_name' %}

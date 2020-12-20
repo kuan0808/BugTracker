@@ -1,0 +1,4 @@
+1. account image resize
+2. username and password validator and help text
+3. admin site filter horizontal
+4.

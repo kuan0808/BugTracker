@@ -63,6 +63,7 @@ db.sqlite3-journal
 *.png
 *.jpg
 .env
+.vscode/
 
 # Flask stuff:
 instance/

@@ -1,5 +1,5 @@
 {
     "python.pythonPath": "venv\\Scripts\\python.exe",
     "python.formatting.provider": "autopep8",
-    "editor.fontFamily": "\"Fira Code\""
+    "editor.fontFamily": "Hack"
 }
