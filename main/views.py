@@ -1,3 +1,12 @@
 from django.shortcuts import render
+from django.views.generic import ListView
+from .models import (
+    Project,
+    Ticket,
+    Comment,
+    Attachment,
+)
 
-# Create your views here.
+
+class ProjectListView(ListView):
+    pass

@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
-# Create your models here.
 
 
 def user_deleted():
@@ -17,28 +16,35 @@ class Project(models.Model):
     title = models.CharField(_('Title'), max_length=100)
     description = models.TextField(
         _('Descriptions'),
-        max_length=500)
+        max_length=500
+    )
     manager = models.ManyToManyField(
-        get_user_model(), verbose_name=_("Manager"),
-        related_name="is_manager_in")
+        get_user_model(),
+        verbose_name=_('Manager'),
+        related_name="is_manager_in"
+    )
     member = models.ManyToManyField(
-        get_user_model(), verbose_name=_("Member"),
-        related_name="is_member_in")
+        get_user_model(),
+        verbose_name=_('Member'),
+        related_name="is_member_in"
+    )
     status = models.CharField(
-        _("Status"),
+        _('Status'),
         max_length=20,
         choices=Status.choices,
-        default=Status.IN_PROGRESS)
+        default=Status.IN_PROGRESS
+    )
     date_created = models.DateTimeField(
-        _("Date created"),
-        auto_now_add=True)
+        _('Date created'),
+        auto_now_add=True
+    )
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = _("Project")
-        verbose_name_plural = _("Projects")
+        verbose_name = _('Project')
+        verbose_name_plural = _('Projects')
 
 
 class Ticket(models.Model):
@@ -55,24 +61,24 @@ class Ticket(models.Model):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE,
         related_name="tickets",
-        verbose_name=_("Project")
+        verbose_name=_('Project')
     )
 
     submitter = models.ForeignKey(
         get_user_model(),
         on_delete=models.SET(user_deleted),
         related_name="is_submitter_of",
-        verbose_name=_("Submitter")
+        verbose_name=_('Submitter')
     )
 
     priority = models.CharField(
-        _(Priority),
+        _('Priority'),
         choices=Priority.choices,
         max_length=20
     )
 
     status = models.CharField(
-        _(Status),
+        _('Status'),
         choices=Status.choices,
         max_length=20,
         default=Status.WAITING
@@ -80,10 +86,11 @@ class Ticket(models.Model):
     assign_to = models.ForeignKey(
         get_user_model(),
         on_delete=models.SET(user_deleted),
-        related_name="is_assign_to"
+        related_name="is_assign_to",
+        verbose_name=_('Assignment')
     )
     date_created = models.DateTimeField(
-        _("Date created"),
+        _('Date created'),
         auto_now_add=True
     )
 
@@ -91,29 +98,41 @@ class Ticket(models.Model):
         return f'{self.project.name}:{self.pk}'
 
     class Meta:
-        verbose_name = _("Ticket")
-        verbose_name_plural = _("Tickets")
+        verbose_name = _('Ticket')
+        verbose_name_plural = _('Tickets')
 
 
 class Comment(models.Model):
-    @staticmethod
-    def get_image_path(instance, filename):
-        return f'comments/{instance.ticket.project.title}/{instance.ticket.id}/filename'
-
     ticket = models.ForeignKey(
         Ticket,
         on_delete=models.CASCADE,
-        related_name="comments"
-    )
-    attachment = models.ImageField(
-        _("Attachment"),
-        upload_to=get_image_path
+        related_name="comments",
+        verbose_name=_('Ticket')
     )
     date_created = models.DateTimeField(
-        _("Date Created"),
+        _('Date Created'),
         auto_now_add=True
     )
     last_edit = models.DateTimeField(
-        _("Last Edit"),
+        _('Last Edit'),
         auto_now=True
+    )
+
+
+def get_image_path(instance, filename):
+    return f'comments/{instance.comment.ticket.project.title}/\
+    {instance.comment.ticket.id}/\
+    {instance.comment.id}/filename'
+
+
+class Attachment(models.Model):
+    attach_to = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name="attachments",
+        verbose_name=_('Attach to')
+    )
+    attachment = models.ImageField(
+        _('Attachment'),
+        upload_to=get_image_path
     )

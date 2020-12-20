@@ -55,9 +55,19 @@ class CustomUser(AbstractBaseUser):
         verbose_name_plural = _('Users')
 
 
+def get_profile_image_path(instance, filename):
+    return f'profile_pics/{instance.user.id}'
+
+
 class Profile(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    user = models.OneToOneField(
+        get_user_model(),
+        on_delete=models.CASCADE
+    )
+    image = models.ImageField(
+        default='default.jpg',
+        upload_to=get_profile_image_path
+    )
 
     def __str__(self):
         return f"{self.user.username}'s Profile"

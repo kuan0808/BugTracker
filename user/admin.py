@@ -9,7 +9,9 @@ class AccountAdmin(UserAdmin):
     search_fields = ('email', 'username',)
     readonly_fields = ('date_joined', 'last_login')
 
-    filter_horizontal = ()  # for many to many fields sidebyside form
+    list_filter = ()
+    # for many to many fields sidebyside form
+    filter_horizontal = ('is_manager_in',)
     fieldsets = ()  # for admin page form category purpose
 
 
