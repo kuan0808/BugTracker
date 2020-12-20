@@ -1,5 +1,7 @@
 {
     "python.pythonPath": "venv\\Scripts\\python.exe",
     "python.formatting.provider": "autopep8",
-    "editor.fontFamily": "Hack"
+    "editor.fontFamily": "Hack",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

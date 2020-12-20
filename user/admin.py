@@ -10,7 +10,7 @@ class AccountAdmin(UserAdmin):
     readonly_fields = ('date_joined', 'last_login')
 
     filter_horizontal = ()  # for many to many fields sidebyside form
-    fieldsets = ()  #for admin page form category purpose
+    fieldsets = ()  # for admin page form category purpose
 
 
 admin.site.register(CustomUser, AccountAdmin)
