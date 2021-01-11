@@ -1,7 +1,7 @@
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser
 from django.utils import timezone
 from .managers import CustomUserManager
 from django.contrib.auth import get_user_model
@@ -56,7 +56,7 @@ class CustomUser(AbstractBaseUser):
 
 
 def get_profile_image_path(instance, filename):
-    return f'profile_pics/{instance.user.id}'
+    return f'profile_pics/{instance.user.id}/{filename}'
 
 
 class Profile(models.Model):
@@ -77,20 +77,19 @@ class Profile(models.Model):
         if self.image.name == 'default.jpg':
             return
 
-        def make_square(im, fill_color=(0, 0, 0, 0)):
-            x, y = im.size
-            size = min(x, y)
-            if x != y:
-                new_im = Image.new('RGBA', (size, size), fill_color)
-                new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
-                return new_im
-            return im
+        # def make_square(im, fill_color=(0, 0, 0, 0)):
+        #     x, y = im.size
+        #     size = max(x, y, 256)
+        #     if x != y:
+        #         new_im = Image.new('RGBA', (size, size), fill_color)
+        #         new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
+        #         return new_im
+        #     return im
         img = Image.open(self.image.path)
-        img = make_square(img)
+        # img = make_square(img)
         if img.height > 300 or img.width > 300:
             output_size = (300, 300)
             img.thumbnail(output_size)
-            print(self.image.name)
             try:
                 img.save(self.image.path)
             except:

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.core.validators import FileExtensionValidator
 
 
 def user_deleted():
@@ -13,7 +14,10 @@ class Project(models.Model):
         STOPPED = ('stopped', _('STOPPED'))
         FINISH = ('finish', _('FINISH'))
 
-    title = models.CharField(_('Title'), max_length=100)
+    title = models.CharField(
+        _('Title'),
+        max_length=50,
+    )
     description = models.TextField(
         _('Descriptions'),
         max_length=500
@@ -38,9 +42,13 @@ class Project(models.Model):
         _('Date created'),
         auto_now_add=True
     )
+    latest = models.DateTimeField(
+        _('Latest'),
+        auto_now=True
+    )
 
     def __str__(self):
-        return self.title
+        return f"{self.title}-{self.date_created}"
 
     class Meta:
         verbose_name = _('Project')
@@ -49,19 +57,34 @@ class Project(models.Model):
 
 class Ticket(models.Model):
     class Priority(models.TextChoices):
-        GREEN = ('low', _('LOW'))
-        YELLOW = ('medium', _('MEDIUM'))
-        RED = ('high', _('HIGH'))
+        GREEN = ('low', _('Low'))
+        YELLOW = ('medium', _('Medium'))
+        RED = ('high', _('High'))
 
     class Status(models.TextChoices):
-        WAITING = ('waiting', _('WAITING FOR ASSIGNMENT'))
-        ASSIGNED = ('assigned', _('ASSIGNED'))
-        CLOSED = ('closed', _('CLOSED'))
+        OPEN = ('open', _('Open'))
+        ASSIGNED = ('assigned', _('Assigned'))
+        CLOSED = ('closed', _('Closed'))
+
+    class Type(models.TextChoices):
+        BUGS_ERRORS = ('bugs_errors', _('Bugs/Errors'))
+        FEATURE_REQUEST = ('feature_request', _('Feature Request'))
+        QUESTIONS = ('questions', _('Questions'))
 
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE,
         related_name="tickets",
         verbose_name=_('Project')
+    )
+
+    title = models.CharField(
+        _('Title'),
+        max_length=50
+    )
+
+    description = models.TextField(
+        _('Description'),
+        max_length=500,
     )
 
     submitter = models.ForeignKey(
@@ -81,17 +104,30 @@ class Ticket(models.Model):
         _('Status'),
         choices=Status.choices,
         max_length=20,
-        default=Status.WAITING
+        default=Status.OPEN
     )
+
+    type = models.CharField(
+        _('Type'),
+        max_length=20,
+        choices=Type.choices
+    )
+
     assign_to = models.ForeignKey(
         get_user_model(),
         on_delete=models.SET(user_deleted),
-        related_name="is_assign_to",
+        related_name="is_assigned_to",
         verbose_name=_('Assignment')
     )
+
     date_created = models.DateTimeField(
         _('Date created'),
         auto_now_add=True
+    )
+
+    update = models.DateTimeField(
+        _('Update'),
+        auto_now=True,
     )
 
     def __str__(self):
@@ -109,6 +145,11 @@ class Comment(models.Model):
         related_name="comments",
         verbose_name=_('Ticket')
     )
+    body = models.TextField(
+        _('Body'),
+        blank=True,
+        max_length=500,
+    )
     date_created = models.DateTimeField(
         _('Date Created'),
         auto_now_add=True
@@ -121,8 +162,8 @@ class Comment(models.Model):
 
 def get_image_path(instance, filename):
     return f'comments/{instance.comment.ticket.project.title}/\
-    {instance.comment.ticket.id}/\
-    {instance.comment.id}/filename'
+        {instance.comment.ticket.id}/\
+        {instance.comment.id}/{filename}'
 
 
 class Attachment(models.Model):
@@ -134,5 +175,9 @@ class Attachment(models.Model):
     )
     attachment = models.ImageField(
         _('Attachment'),
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(['png', 'jpg', 'jpeg'])],
         upload_to=get_image_path
     )

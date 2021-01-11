@@ -1,0 +1,167 @@
+{% extends 'main/base.html' %} {% load static %} {% load i18n %} {% block
+content %}
+
+<style type="text/css"></style>
+
+<div class="container">
+  <div class="row w-100">
+    <h2 class="col-12 mt-4 p-0 brand-title">{% trans "My Projects" %}</h2>
+    <div class="col-12">
+      <form class="row" method="GET" id="filter_form" name="filter_form">
+        {% csrf_token %}
+        <div class="col-6">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#filter_options"
+            aria-expanded="false"
+            aria-controls="filter_options"
+          >
+            Filter
+          </button>
+          <div class="collapse" id="filter_options">
+            <div class="card card-body">
+              <div class="btn-group">
+  <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    Action
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#">Action</a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li><a class="dropdown-item" href="#">Something else here</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#">Separated link</a></li>
+  </ul>
+</div>
+              <select
+                class="form-select"
+                name="operator"
+                id="operator"
+              ></select>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#sort_options"
+            aria-expanded="false"
+            aria-controls="sort_options"
+          >
+            Sort by
+          </button>
+          <div class="collapse" id="sort_options">
+            <div class="card card-body">
+              <div class="input-group">
+                <select class="form-select" name="order_by">
+                  <option value="date_created" selected>
+                    {% trans 'Create date' %}
+                  </option>
+                  <option value="latest">{% trans 'Last update' %}</option>
+                </select>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="reverse_or_not"
+                    id="reverse_or_not"
+                  />
+                  <label class="form-check-label" for="reverse_or_not">
+                    Reverse
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- FILTERED Pagination -->
+    <div class="d-flex flex-column m-auto pagination mt-5">
+      <nav aria-label="Page navigation">
+        <ul class="pagination pg-grey justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <button
+                class="page-link"
+                form="filter_form"
+                type="submit"
+                name="page"
+                value="{{ page_obj.previous_page_number }}"
+              >
+                Previous
+              </button>
+            </li>
+          {% endif %}
+          {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+              <li class="page-item active">
+                <button class="page-link">{{ i }}</button>
+              </li>
+            {% else %}
+              <li class="page-item">
+                <button
+                  class="page-link"
+                  form="filter_form"
+                  type="submit"
+                  name="page"
+                  value="{{ i }}"
+                >
+                  {{ i }}
+                </button>
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <button
+                class="page-link"
+                form="filter_form"
+                type="submit"
+                name="page"
+                value="{{ page_obj.next_page_number }}"
+              >
+                Next
+              </button>
+            </li>
+            <li class="page-item">
+              <button
+                class="page-link"
+                form="filter_form"
+                type="submit"
+                name="page"
+                value="{{ page_obj.paginator.num_pages }}"
+              >
+                Last
+              </button>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    <!-- end pagination-->
+
+    <div class="row form-card mx-auto mt-4" style="max-width: 1300px">
+      <div class="col-3 mb-4">
+        <button type="button" class="btn custom-btn rounded-pill">
+          Create Project
+        </button>
+      </div>
+      <div class="w-100"></div>
+      <div class="col-3">1q34124e</div>
+    </div>
+    {% include 'snippets/pagination.html' with objects=projects %}
+    {% endblock content %}
+    {% block javascripts %}
+
+    <script type="text/javascript">
+      const filter_box = document.getElementById("filter_box");
+      const sort_box = document.getElementById("sort_box");
+    </script>
+    {% endblock javascripts %}
+  </div>
+</div>

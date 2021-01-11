@@ -1,45 +1,8 @@
 {% extends 'main/base.html' %}
 {% load i18n %}
+{% load static %}
 {% block content %}
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 <style>
-    {% comment %} /* ---------------------------------------------------
-    IMPORTANT TECHNIQUE TO MAKE A SQUARE BOX AND CENTER THE IMAGE
-    ----------------------------------------------------- */ {% endcomment %}
-    .profile-img-box {
-        width: 100%;
-        padding-bottom: 100%;     {% comment %} The padding bottom is base on the container's width!! {% endcomment %}
-        border-radius: 50%;
-        border: 4px solid #37426f;
-        box-shadow: 0 0 8px #37426f;
-        position: relative;
-        overflow: hidden;
-    }
-    .profile-img-inner {
-        position: absolute;
-        margin: 0px;
-        padding: 0px;
-        left: 0px;
-        right: 0px;
-        top: 0px;
-        bottom: 0px;
-        height: 100%;
-        background-color: black;
-        overflow: hidden;
-    }
-    .profile-img-inner img,
-    label>svg {
-        display: block;
-        position: absolute;
-        height: 100%;
-        top: 50%;
-        left: 50%;
-        object-fit: fill;
-        transform: translate(-50%, -50%);
-    }
-    {% comment %} /* ---------------------------------------------------
-        IMPORTANT TECHNIQUE TO MAKE A SQUARE BOX AND CENTER THE IMAGE
-        ----------------------------------------------------- */ {% endcomment %}
     .edit-button {
         position: absolute;
         display: block;
@@ -53,44 +16,95 @@
         background: #b1bce6;
         cursor: pointer;
     }
+    .edit-button svg {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
     .image-upload>input {
         display: none;
+    }
+    .img-explorer-container {
+        width: 324px;
+        margin: 0 auto;
+    }
+    .img-explorer-view {
+        width: 320px;
+        height: 320px;
+        position: relative;
+        overflow: hidden;
+        padding: 0;
+        border: 3px dashed #DFE1E6;
+    }
+    .img-mask {
+        box-shadow: 0 0 0 100px rgba(0,0,0,.4);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -128px;
+        margin-top: -128px;
+    }
+    .circle-mask {
+        width: 256px;
+        height: 256px;
+        border-radius: 128px;
+        background-clip: padding-box;
+    }
+
+    .crop-mask {
+        width: 256px;
+        height: 256px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -128px;
+        margin-top: -128px;
+    }
+
+
+    #upload-img {
+        position: absolute;
+    }
+    .img-drag-zone {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        cursor: move;
+        z-index: 50000;
+        background-color: rgba(0,0,0,0);
     }
 </style>
 
 <h2 class="text-center mt-4 p-0 brand-title">{% trans "My Profile" %}</h2>
-<div class="container-fluid text-center">
-<div class="row pt-2 mx-auto mt-4 form-card">
-    <div class="col-md-8 offset-md-2">
-        <form method="POST" enctype="multipart/form-data" class="form-row g-1">
+<div class="container-fluid">
+<div class="row form-card mx-auto mt-4 ">
+    <div class="col-10 offset-1">
+        <form id="profile-form" method="POST" class="row g-1">
             {% csrf_token %}
-            <div class="col-6 offset-3 mt-3 text-center">
-                <div class="profile-img-box">
-                    <div class="profile-img-inner">
-                        <img src="{{ user.profile.image.url }}" id="profile-img" />
-                    </div>
+            <div class="col-6 offset-3 my-3 text-center">
+                <div class="img-container">
+                    <img src="{{ user.profile.image.url }}" id="profile-img"/>
+                    <label class="edit-button image-upload" data-bs-toggle="modal" data-bs-target="#image-modal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                        </svg>
+                    </label>
                 </div>
-                <label class="edit-button image-upload" for="id_image">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                    </svg>
-                    <input type="file" name="image" accept="image/*" id="id_image"
-                    onchange="showImage(this); showAlert();">
-                </label>
             </div>
-                {% for field in u_form %}
-                    {% if field.name == 'last_name' %}
-                        <div class="col-5 form-group mb-2 mt-4">
-                    {% elif field.name == 'first_name' %}
-                        <div class="col-7 form-group mb-2 mt-4">
-                    {% else %}
-                        <div class="col-12 form-group mb-2 mt-4">
-                    {% endif %}
+            {% for field in u_form %}
+                {% if field.name == 'last_name' %}
+            <div class="col-6 mb-3">
+                {% elif field.name == 'first_name' %}
+            <div class="col-6 mb-3">
+                {% else %}
+            <div class="col-12 mb-3">
+                {% endif %}
+                <div class="form-floating">
                     <input type="text"
-                        name="{{ field.name }}" class="textinput textInput form-control form-input"
+                        name="{{ field.name }}" class="form-control form-input"
                         {% if field.name == 'username' %}
-                        value="{{ form.instance.username }}"
+                        value="{{ user.username }}"
                         {% elif field.name == 'first_name' %}
                         value="{{ user.first_name }}"
                         {% elif field.name == 'last_name' %}
@@ -98,38 +112,234 @@
                         {% else %}
                         value="{{ user.email }}"
                         {% endif %}
-                        placeholder="{{ field.label }}" id="id_{{ field.name }}"
+                        placeholder="{{ field.label }}" id="{{ field.id_for_label }}"
                         onchange="showAlert()">
-                    <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
-                    {% if u_form.errors %}
-                        {% for error_message in field.errors %}
-                            <p class="invalid-feedback d-block"> <strong>{{ error_message| striptags }}</strong></p>
-                        {% endfor %}
-                    {% endif %}
-                        </div>
-                {% endfor %}
-                <div class="invalid-feedback text-center m-0 mb-1" id="alert-str">
-                    <strong>{% trans "Notice : Press the button below to apply." %}</strong>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 </div>
-                <div class="col-12 form-group text-center my-4">
-                    <button class="btn btn-lg custom-btn" type="submit">{% trans "Update Profile" %}</button>
-                </div>
+                {% if u_form.errors %}
+                    {% for error_message in field.errors %}
+                    <div class="text-left">
+                        <p class="invalid-feedback d-block mb-0"> <strong>{{ error_message| striptags }}</strong></p>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="invalid-feedback text-center m-0 mb-1" id="alert-str">
+                <strong>{% trans "Notice : Press the button below to apply." %}</strong>
+            </div>
+            <div class="col-12 form-group text-center my-4">
+                <button class="btn btn-lg custom-btn" type="submit">{% trans "Update Profile" %}</button>
+            </div>
         </form>
     </div>
 </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="image-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark" id="staticBackdropLabel">{% trans "Upload Account Image" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="img-explorer-container">
+                    <div class="img-explorer-view">
+                        <div class="crop-mask">
+                            <img src="" id="upload-img" style="top:50%; left:50%;">
+                        </div>
+                        <div class="img-mask circle-mask"></div>
+                        <div id="img-drag" class="img-drag-zone"></div>
+                    </div>
+                </div>
+                <input type="range" id="ranger" class="form-range mt-4 px-5" min="0" max="100" step="1" value="0" onchange="imageResize(this)">
+                <form id="p_form" class="text-center">
+                    {% csrf_token %}
+                    <label for="id_image" class="btn custom-btn" type="button">{% trans "Select an image" %}</label>
+                    <div class="text-muted">{% trans "JPG, GIF or PNG image" %}</div>
+                    <input type="file" name="image" accept="image/*" id="id_image" class="d-none" onchange="showImage(this);">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn custom-btn" data-bs-dismiss="modal" onclick="doCapture()">{% trans "Save" %}</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End -->
+{% endblock content %}
+
+{% block javascripts %}
 <script type="text/javascript">
+    window.onload = functionProfile;
+    dragElement(document.getElementById("img-drag"));
+    const ranger = document.getElementById("ranger");
+    function doCapture(){
+        const profile_img = document.getElementById('profile-img')
+        const sidebarAvatar = document.getElementById('sidebar-avatar')
+        const upload_img = document.getElementById('upload-img')
+        const img_count = document.getElementById('id_image').files.length
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')
+        const alertBox = document.querySelector('.alert-box')
+        const url = ""
+        const handleAlerts = (type, text) =>{
+            alertBox.innerHTML =
+            `<div class="alert bg-${type} alert-dismissible fade show text-center" role="alert">
+                <strong class="text-white">${text}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`
+        }
+        if (img_count){
+            html2canvas(document.querySelector(".crop-mask")).then(function (canvas) {
+            // Get the image data as JPEG and 0.9 quality (0.0 - 1.0)
+                profile_img.src = canvas.toDataURL("image/jpeg", 0.9)
+                sidebarAvatar.src = canvas.toDataURL("image/jpeg", 0.9)
+                canvas.toBlob((blob)=>{
+                    var fd = new FormData()
+                    fd.append('image', blob, '{{ user.username }}.png')
+                    fd.append('csrfmiddlewaretoken', csrf[1].value)
+                    $.ajax({
+                        type:'POST',
+                        url: url,
+                        enctype: 'multipart/form-data',
+                        data: fd,
+                        success: function(response){
+                            const sText = `Successfully change profile image. `
+                            handleAlerts('success', sText)
+                            setTimeout(()=>{
+                                alertBox.innerHTML = ""
+                            }, 3000)
+                        },
+                        error: function(error){
+                            handleAlerts('danger', 'Oops..something went wrong.')
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                    })
+                })
+            })
+        }
+    }
+
     function functionProfile(){
         document.getElementById("profile").classList.add("active");
     }
     function showAlert(){
-        var alert_str = document.getElementById('alert-str');
+        const alert_str = document.getElementById('alert-str');
         alert_str.classList.add('d-block');
     }
     function showImage(element){
-        document.getElementById('profile-img').src = window.URL.createObjectURL(element.files[0]);
+        const reader = new FileReader();
+        //Read the contents of Image File.
+        reader.readAsDataURL(element.files[0]);
+        reader.onload = function (e) {
+            //Initiate the JavaScript Image object.
+            const image = new Image();
+            //Set the Base64 string return from FileReader as source.
+            image.src = e.target.result;
+            //Validate the File Height and Width.
+            image.onload = function () {
+                var height = this.height;
+                var width = this.width;
+                natural_w = width;
+                natural_h = height;
+                const max_size = 256;
+                if (width < height) {
+                    if (width >= max_size){
+                        natural_w = width;
+                        natural_h = height;
+                        height *= max_size / width;
+                        width = max_size;
+                    }else{
+                        natural_h *= max_size / width;
+                        natural_w = max_size;
+                        height *= max_size / width;
+                        width = max_size;
+                    }
+                } else {
+                    if (height >= max_size){
+                        natural_w = width;
+                        natural_h = height;
+                        width *= max_size / height;
+                        height = max_size;
+                    }else{
+                        natural_w *= max_size / height;
+                        natural_h = max_size;
+                        width *= max_size / height;
+                        height = max_size;
+                    }
+                }
+                initial_ranger = (100*height)/natural_h;
+                initial_diagnal = Math.sqrt(Math.pow(width,2) + Math.pow(height,2));
+                window.ranger.value = initial_ranger;
+                const upload_img = document.getElementById('upload-img');
+                upload_img.src = e.target.result;
+                upload_img.style.width = width + "px";
+                upload_img.style.height = height + "px";
+                upload_img.style.marginLeft = -width/2 + "px";
+                upload_img.style.marginTop = -height/2 + "px";
+                upload_img.style.top = "50%";
+                upload_img.style.left = "50%";
+            };
+        }
     }
-    window.onload = functionProfile;
+    function imageResize(element){
+        var img = document.getElementById('upload-img');
+        var diagnal = Math.sqrt(Math.pow(img.width,2) + Math.pow(img.height,2));
+        if (element.value >= 0 & element.value <= window.initial_ranger){
+            factor = (((element.value*(window.initial_diagnal-256)) / window.initial_ranger) + 256) / diagnal;
+            var width = img.width * factor;
+            var height = img.height * factor;
+            img.style.width = width + "px";
+            img.style.height = height + "px";
+            img.style.marginLeft = -width/2 + "px";
+            img.style.marginTop = -height/2 + "px";
+        }else{
+            var width = (window.natural_w / 100) * element.value;
+            var height = (window.natural_h / 100) * element.value;
+            img.style.width = width + "px";
+            img.style.height = height + "px";
+            img.style.marginLeft = -width/2 + "px";
+            img.style.marginTop = -height/2 + "px";
+        }
+    }
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        var img = document.getElementById('upload-img');
+        elmnt.onmousedown = dragMouseDown;
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            img.style.top = (img.offsetTop - pos2 + img.height/2) + "px";
+            img.style.left = (img.offsetLeft - pos1 + img.width/2) + "px";
+        }
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
 </script>
-{% endblock content %}
+{% endblock javascripts %}
+
+

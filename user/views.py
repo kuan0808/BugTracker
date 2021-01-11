@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -49,43 +50,31 @@ class UserLogInView(FormView):
             messages.success(self.request, _(
                 f"Hi {credentials['username']}. Welcome back !"))
             return super().form_valid(form)
-        else:
-            messages.warning(self.request, _('Log in failed. \
-                                please try again'))
-            return redirect('login')
 
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('user:login')
 
 
 @login_required
 def ProfileView(request):
-    user_data = request.POST
-    profile_data = request.FILES
-    if request.method == 'POST':
-        u_form = UserUpdateForm(user_data, instance=request.user)
-        p_form = ProfileUpdateForm(
-            user_data, profile_data, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
+    user_data = (request.POST or None)
+    profile_data = (request.FILES or None)
+    u_form = UserUpdateForm(user_data, instance=request.user)
+    p_form = ProfileUpdateForm(
+        user_data, profile_data, instance=request.user.profile)
+
+    if request.is_ajax():
+        if p_form.is_valid():
             p_form.save()
-            messages.success(request, _('Your account has been updated !'))
-            return redirect('profile')
-        else:
-            messages.error(request, _('Update profile faild !'))
-            if u_form.errors:
-                for field in u_form:
-                    if field.errors:
-                        for error_message in field.errors:
-                            print(f'{field}: {error_message}')
-            return redirect('profile')
-    else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
-        context = {
-            'u_form': u_form,
-            'p_form': p_form
-        }
-        return render(request, 'user/profile.html', context)
+
+    if u_form.is_valid():
+        u_form.save()
+        messages.success(request, _('Your account has been updated !'))
+        return redirect('user:profile')
+    context = {
+        'u_form': u_form,
+        'p_form': p_form
+    }
+    return render(request, 'user/profile.html', context)

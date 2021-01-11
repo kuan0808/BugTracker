@@ -1,6 +1,0 @@
-1. account image resize and drag
-2. username and password validator and help text
-3. admin site filter horizontal
-4. uuid field for project url
-5. profile image and sidebar image system fix(add drag and zoom functions)
-6. admin form completion

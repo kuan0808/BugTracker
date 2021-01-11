@@ -1,0 +1,19 @@
+<div class="alert-box">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible fade show text-center
+        {% if message.tags == 'error' %}bg-danger {% else %}bg-success{% endif %}" role="alert">
+            <strong class="text-white">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% block javascripts %}
+<script type="text/javascript">
+window.onload = setTimeout(()=>{
+            document.querySelector(".alert-box").innerHTML = "";
+            }, 3000)
+</script>
+{% endblock javascripts %}

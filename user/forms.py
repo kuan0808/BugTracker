@@ -93,10 +93,6 @@ class UserLoginForm(forms.Form):
 
 
 class UserUpdateForm(forms.ModelForm):
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data['username']
-
     class Meta:
         model = get_user_model()
         fields = ('username', 'first_name', 'last_name', 'email')
@@ -104,6 +100,11 @@ class UserUpdateForm(forms.ModelForm):
             'email': _('Email Address'),
             'first_name': _('First Name'),
             'last_name': _('Last Name'),
+        }
+        error_messages = {
+            'username': {
+                'unique': _("Username has been used.")
+            },
         }
 
 

@@ -1,109 +1,117 @@
-<link rel="stylesheet" href="{% static 'main/base.css' %}">
-
-<nav id="sidebar">
-    <!-- Sidebar close button -->
-    <button type="button" id="close-side" onclick="closeSide()">
-        <i class="fas fa-arrow-left"></i>
-    </button>
-    <!-- Sidebar close button -->
-
-    <!-- Sidebar Open button-->
-    <div id="open-side">
-        <button type="button" class="btn" onclick="openSide()">
-            <i class="fas fa-arrow-right"></i>
+{% load static %}
+{% load i18n %}
+<!-- Sidebar -->
+    <nav id="sidebar">
+        <!-- Sidebar close button -->
+        <button type="button" id="close-side" onclick="closeSide()">
+            <i class="fas fa-arrow-left"></i>
         </button>
-    </div>
-    <!-- Sidebar Open button-->
+        <!-- Sidebar close button -->
 
-    <div class="sidebar-header text-center">
-        <a href="{% url 'profile' %}">
-            <img src="{{ user.profile.image.url }}" alt="Profile Image" class="sidebar-avatar">
-        </a>
-            <div class="mt-2">
-                <p>Welcome, <strong>{{ user.username }}</strong></p>
-            </div>
-    </div>
-
-    <ul class="list-unstyled components pt-0">
-        <li class="active">
-            <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
-                class="dropdown-toggle">Dashboard</a>
-            <ul class="collapse list-unstyled" id="homeSubmenu">
-                <li>
-                    <a href="#">Home 1</a>
-                </li>
-                <li>
-                    <a href="#">Home 2</a>
-                </li>
-                <li>
-                    <a href="#">Home 3</a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">My Projects</a>
-        </li>
-        <li>
-            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My
-                Tickets</a>
-            <ul class="collapse list-unstyled" id="pageSubmenu">
-                <li>
-                    <a href="#">Page 1</a>
-                </li>
-                <li>
-                    <a href="#">Page 2</a>
-                </li>
-                <li>
-                    <a href="#">Page 3</a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Profile</a>
-        </li>
-        <li>
-            <a href="#">Contact</a>
-        </li>
-    </ul>
-</nav>
-<div id="content">
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-dismissible fade show text-center
-        {% if message.tags == 'error' %}bg-danger {% else %}bg-success{% endif %}" role="alert">
-            <strong class="text-white">{{ message }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Sidebar Open button-->
+        <div id="open-side">
+            <button type="button" class="btn" onclick="openSide()">
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
-        {% endfor %}
-    {% endif %}
-    {% block content %}{% endblock %}
-</div>
-<div id="overlay"></div>
+        <!-- Sidebar Open button-->
 
+        <div class="sidebar-header text-center">
+            <div class="img-container w-50 mx-auto">
+                <a href="{% url 'user:profile' %}">
+                    <img id="sidebar-avatar" src="{{ user.profile.image.url }}" alt="Profile Image">
+                </a>
+            </div>
+            <div class="mt-2">
+                <p>{% trans "Welcome, " %}<strong>{% trans user.username %}</strong></p>
+            </div>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li>
+                <div class="dropdown">
+                    <a href="#homeSubmenu" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="homeSubmenu" class="dropdown-toggle">{% trans "Dashboard" %}</a>
+                </div>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#">Home 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 3</a>
+                        </li>
+                    </ul>
+            </li>
+            <li id="projects">
+                <a href="{% url 'main:project-list' %}" id="myprojects">{% trans "My Projects" %}</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="#pageSubmenu" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="pageSubmenu" class="dropdown-toggle">My Tickets</a>
+                </div>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li>
+                            <a href="#">Page 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Page 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Page 3</a>
+                        </li>
+                    </ul>
+            </li>
+            <li id="profile">
+                <a href="{% url 'user:profile' %}">{% trans "Profile" %}</a>
+            </li>
+            <li>
+                <a href="#">Contact</a>
+            </li>
+        </ul>
+    </nav>
+    <div id="overlay"></div>
+{% block javascripts %}
 <script type="text/javascript">
-    function openSide() {
-        var w = window.innerWidth;
-        document.getElementById(
-            "sidebar").style.marginLeft = "0px";
-        document.getElementById(
-            "content").style.marginLeft = "250px";
-        document.getElementById(
-            "open-side").style.display = "none";
-        if (w <= 960) {
+    window.onresize = windowSizeCheck;
+        function openSide() {
+            var w = window.innerWidth;
+			document.getElementById(
+				"sidebar").style.marginLeft = "0px";
+			document.getElementById(
+				"content").style.marginLeft = "250px";
             document.getElementById(
-            "overlay").classList.add("active");
-            document.getElementById(
-            "content").style.marginLeft = "0px";
+				"open-side").style.display = "none";
+            if (w <= 960) {
+                document.getElementById(
+				"overlay").classList.add("active");
+                document.getElementById(
+				"content").style.marginLeft = "0px";
+		    }
         }
-    }
-    function closeSide() {
-        document.getElementById(
-            "sidebar").style.marginLeft = "-250px";
-        document.getElementById(
-            "content").style.marginLeft = "0px";
-        document.getElementById(
-            "open-side").style.display = "block";
-        document.getElementById(
-            "overlay").classList.remove("active");
-    }
+		function closeSide() {
+			document.getElementById(
+				"sidebar").style.marginLeft = "-250px";
+			document.getElementById(
+				"content").style.marginLeft = "0px";
+            document.getElementById(
+				"open-side").style.display = "block";
+            document.getElementById(
+				"overlay").classList.remove("active");
+		}
+        function windowSizeCheck() {
+            var w = window.innerWidth;
+            var x = document.getElementById("sidebar");
+            if (w <= 960 && x.style.marginLeft == "0px") {
+                document.getElementById(
+				"overlay").classList.add("active");
+                document.getElementById(
+				"content").style.marginLeft = "0px";
+            }
+        }
 </script>
+{% endblock javascripts %}
+

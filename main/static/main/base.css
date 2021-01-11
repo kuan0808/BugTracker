@@ -1,26 +1,52 @@
-/*
-    DEMO STYLE
-*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
-* {
-    padding: 0px;
-    margin: 0px
+:root {
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    --bg-primary: #37426f;
+    --bg-secondary: #b1bce6;
+    --transition-speed: 600ms;
 }
 
 /* --------------------------------------------------------------------------------------------
-    To center a .col first html,body{height:100%;} -> .container{height:100%;} -> row add .h100
+    To center a .col first html,body{height:100%;} -> .container{height:100%;} -> row add .h100 -> col margin:auto
 ----------------------------------------------------------------------------------------------- */
-html, body {
-    height: 100%;
-    font-family: 'Poppins', sans-serif;
-    background: #37426f;
-    color: #fff;
-
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
 }
 
-p label{
-    font-family: 'Poppins', sans-serif;
+html,
+body {
+    height: 100%;
+    background-color: var(--bg-primary);
+    color: #fff;
+}
+
+body::-webkit-scrollbar {
+    width: 0.8rem;
+}
+
+body::-webkit-scrollbar-track {
+    background: #6969af8a;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #321c6ed5;
+}
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+#content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+p label {
     font-size: 1.1em;
     font-weight: 300;
     line-height: 1.7em;
@@ -36,71 +62,61 @@ a:focus {
 }
 
 .custom-btn {
-    background-color: #37426f;
+    background-color: var(--bg-primary);
     color: #fff;
 }
 
 .custom-btn:hover {
-    background-color: #b1bce6;
-    color: #37426f;
+    background-color: var(--bg-secondary);
+    color: var(--bg-primary);
 }
-
-.object-fit { height: 100%; }
-.object-fill { object-fit: fill; }
-.object-contain { object-fit: contain; }
-.object-cover { object-fit: cover; }
-.object-none { object-fit: none; }
-.object-scale-down { object-fit: scale-down; }
 
 .form-card {
     background: #fff;
-    border-radius: 25px;
+    border-radius: 20px;
     max-width: 480px;
-    color: #37426f;
+    color: var(--bg-primary);
     padding: 20px;
     margin: auto;
     box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
-	-webkit-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
-	-moz-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
+    -moz-box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4), 0 6px 20px 0 rgba(223, 223, 223, 0.29);
 }
+
 .form-card-brand {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    }
+}
 
 .brand-title {
     padding: 0px;
     font-weight: 600;
     font-size: 2rem;
     padding: 0.5rem 0 0.5rem 0;
-    border-bottom: 2px solid #37426f;
+    border-bottom: 2px solid var(--bg-primary);
 }
 
 .form-input {
     border-radius: 20px;
 }
 
-.form-input-text {
-    position:absolute;
+.form-input-btm-text {
+    position: absolute;
     display: block;
     top: 105%;
     right: 0px;
     font-size: 0.5rem;
 }
 
-.password-field {
-    position: relative;
-}
-
 .togglePassword {
-    position:absolute;
+    position: absolute;
     display: block;
     top: 50%;
     transform: translateY(-50%);
-    right: 20px;
+    right: 30px;
     width: 30px;
-    height:30px;
+    height: 30px;
     cursor: pointer;
 }
 
@@ -117,14 +133,37 @@ a:focus {
     NAVBAR STYLE
 ----------------------------------------------------- */
 .nav-color {
-    background-color: #b1bce6;
+    background-color: var(--bg-secondary);
     color: #fff;
 
 }
 
 .bg-color {
-    background-color: #37426f;
+    background-color: var(--bg-primary);
 }
+
+/*===========create a square(circle) img!!!!!!!===============*/
+.img-container {
+    position: relative;
+}
+
+.img-container::after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.img-container img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/*================================end========================== */
 
 /* ---------------------------------------------------
     SIDEBAR STYLE
@@ -132,29 +171,26 @@ a:focus {
 
 #sidebar {
     position: fixed;
-    top: 0px;
-    left: 0px;
     min-width: 250px;
-    height : 100%;
+    height: 100%;
     max-width: 250px;
-    z-index: 2;
-    padding-top: 50px;
-    background: #b1bce6;
+    z-index: 3;
+    background: var(--bg-secondary);
     color: #fff;
-    transition: all 0.3s;
+    transition: all 600ms ease;
 }
 
 #open-side {
-    position:absolute;
-    top: 65px;
+    position: absolute;
+    top: 10px;
     right: -20px;
     z-index: 0;
     display: none;
     padding-left: 5px;
-    width:40px;
+    width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #b1bce6;
+    background: var(--bg-secondary);
 }
 
 #open-side:hover {
@@ -167,9 +203,9 @@ a:focus {
     height: 40px;
     border: none;
     text-align: center;
-    background: #b1bce6;
+    background: var(--bg-secondary);
     position: absolute;
-    top: 65px;
+    top: 10px;
     right: 10px;
     cursor: pointer;
     -webkit-transition: all 0.3s;
@@ -182,37 +218,33 @@ a:focus {
     color: #7386D5;
 }
 
-.sidebar-avatar {
-  vertical-align: middle;
-  width: 50%;
-  height: 50%;
-  border-radius: 50%;
-  border: 5px solid #37426f;
-}
-
-.sidebar-avatar:hover {
-    border: 5px solid #fff;
-}
-
 #sidebar .sidebar-header {
     padding: 20px;
-    background: #b1bce6;
+    margin-top: 10px;
+    background: var(--bg-secondary);
 }
 
 .sidebar-header strong {
-    color: #37426f;
+    color: var(--bg-primary);
     font-size: 1.4em;
     font-weight: 600;
 }
 
-#sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
+
+.sidebar-nav {
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    align-items: center;
 }
 
-#sidebar ul p {
-    color: #fff;
-    padding: 10px;
+#sidebar ul li {
+    width: 100%;
+}
+
+#sidebar ul li.active {
+    background-color: #6d7fcc;
 }
 
 #sidebar ul li a {
@@ -224,16 +256,6 @@ a:focus {
 #sidebar ul li a:hover {
     color: #7386D5;
     background: #fff;
-}
-
-#sidebar ul li.active>a,
-a[aria-expanded="true"] {
-    color: #fff;
-    background: #6d7fcc;
-}
-
-a[data-toggle="collapse"] {
-    position: relative;
 }
 
 .dropdown-toggle::after {
@@ -249,6 +271,7 @@ ul ul a {
     padding-left: 30px !important;
     background: #6d7fcc;
 }
+
 /* ---------------------------------------------------
     OVERLAY STYLE
 ----------------------------------------------------- */
@@ -257,24 +280,16 @@ ul ul a {
     position: fixed;
     width: 100vw;
     height: 100vh;
-    top : 0px;
+    top: 0px;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 1;
+    z-index: 2;
     opacity: 0;
     transition: all 0.5s ease-in-out;
 }
+
 #overlay.active {
     display: block;
     opacity: 1;
-}
-/* ---------------------------------------------------
-    CONTENT STYLE
------------------------------------------------------ */
-
-#content {
-    margin-left: 250px;
-    padding : 20px;
-    transition: all 0.3s;
 }
 
 /* ---------------------------------------------------
@@ -285,9 +300,11 @@ ul ul a {
     #open-side {
         display: block;
     }
+
     #sidebar {
         margin-left: -250px;
     }
+
     #content {
         margin-left: 0px;
     }

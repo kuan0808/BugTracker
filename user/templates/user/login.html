@@ -1,4 +1,4 @@
-{% extends 'user/user_base.html' %}
+{% extends 'user/base.html' %}
 {% load static %}
 {% load i18n %}
 {% block content %}
@@ -10,26 +10,28 @@
                 {% translate 'LOG IN' %}</legend>
         </div>
         {% for field in form %}
-            <div class="col-12 form-group pb-3">
-            {{ field.label_tag }}
-            <div class="password-field">
-                <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
-                    name="{{ field.name }}" class="textinput textInput form-control form-input" placeholder="Enter {{ field.label }}"
-                    id="id_{{ field.name }}" required>
-                    {% if field.name == 'password' %}
-                        <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
-                        <a class="link-bl form-input-text" href="{% url 'password_reset' %}">Forget password ?</a>
-                    {% endif %}
-            </div>
-            <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
-            {% if form.errors %}
-                {% for error_message in field.errors %}
-                    <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
-                {% endfor %}
-            {% endif %}
+            <div class="col-12 mt-3">
+                <div class="form-floating">
+                    <input {% if field.name == 'password'%} type="password" {% else %} type="text" {% endif %}
+                        name="{{ field.name }}"
+                        class="form-control form-input position-relative {% if field.errors %}is-invalid{% endif %}"
+                        placeholder="Enter {{ field.label }}"
+                        id="{{ field.id_for_label }}" required>
+                        {% if field.name == 'password' %}
+                            <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
+                            <a class="link-bl form-input-btm-text" href="{% url 'user:password_reset' %}">Forget password ?</a>
+                        {% endif %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                </div>
+                <!-- 這裡的error_message要用 |striptags，才能取得錯誤訊息 -->
+                {% if form.errors %}
+                    {% for error_message in field.errors %}
+                        <p class="invalid-feedback d-block"> <strong>{{ error_message|striptags }}</strong></p>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endfor %}
-        <div class="form-check col-12 ms-3">
+        <div class="form-check col-12 ms-3 mt-2">
             <input type="checkbox" class="form-check-input" id="dropdownCheck2">
             <label class="form-check-label" for="dropdownCheck2">
                 Remember me
@@ -41,7 +43,7 @@
     </form>
     <div class="border-top pt-1 text-center">
         <small class="text-muted">
-            Don't have an account? <a class="link-bl ml-2" href="{% url 'register'%}">Sign Up</a>
+            Don't have an account? <a class="link-bl ml-2" href="{% url 'user:register'%}">Sign Up</a>
         </small>
     </div>
 </div>

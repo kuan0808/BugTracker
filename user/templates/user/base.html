@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block main %}
+  <main role="main" class="container-fluid p-2 h-100">
+    {% include 'snippets/messages.html' %}
+      <div class="row h-100 m-0">
+        {% block content %}{% endblock content %}
+      </div>
+  </main>
+{% endblock main %}
+<body>
+
+</body>
+</html>

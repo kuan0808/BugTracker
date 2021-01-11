@@ -2,12 +2,15 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
 from .views import (UserCreateView,
                     UserLogInView,
                     logout_view,
-                    ProfileView)
-# from .views import register_view, UserLogInView
+                    ProfileView
+                    )
+
+app_name = 'user'
 
 urlpatterns = [
     path('register/', UserCreateView.as_view(), name='register'),
@@ -22,7 +25,8 @@ urlpatterns = [
 
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
-             template_name='registration/password_reset.html'),
+            template_name='registration/password_reset.html',
+            success_url = reverse_lazy('user:password_reset_done')),
          name='password_reset'),
 
     path('password-reset/done/',
@@ -40,8 +44,3 @@ urlpatterns = [
              template_name='registration/password_reset_complete.html'),
          name='password_reset_complete'),
 ]
-
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)

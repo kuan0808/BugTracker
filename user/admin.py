@@ -5,9 +5,9 @@ from .models import CustomUser, Profile
 
 class AccountAdmin(UserAdmin):
     list_display = ('email', 'username', 'date_joined',
-                    'last_login', 'is_staff')
+                    'last_login', 'is_staff',)
     search_fields = ('email', 'username',)
-    readonly_fields = ('date_joined', 'last_login')
+    readonly_fields = ('date_joined', 'last_login',)
 
     list_filter = ()
     # for many to many fields sidebyside form

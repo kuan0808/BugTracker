@@ -1,25 +1,25 @@
-{% extends 'user/user_base.html' %}
+{% extends 'user/base.html' %}
 {% load static %}
 {% load i18n %}
 {% block content %}
 <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 form-card">
     <form method="POST" class="row">
         {% csrf_token %}
-        <div class="col-12 form-card-brand">
-            <legend class="brand-title mb-2 text-center">
+        <div class="col-12 form-card-brand mb-4">
+            <legend class="brand-title text-center">
                 {% trans "Bug Tracker" %}
-                <img src="{% static 'main/bug.png' %}" alt="Brand"></legend>
+                <img src="{% static 'main/bug.png' %}" alt="Brand">
+            </legend>
         </div>
         {% for field in form %}
             {% if field.name == 'password1' or field.name == 'password2' %}
-                <div class="col-12 form-group password-form pb-3">
+                <div class="col-12 pb-3">
             {% elif field.name == 'first_name' or field.name == 'last_name' %}
-                <div class="col-6 form-group pb-3">
+                <div class="col-6 pb-3">
             {% else %}
-                <div class="col-12 form-group pb-3">
+                <div class="col-12 pb-3">
             {% endif %}
-                {{ field.label_tag }}
-                <div class="password-field">
+                <div class="form-floating">
                     <input
                         {% if field.name == 'email' %}
                             type="email"
@@ -34,11 +34,12 @@
                         {% if field.value and field.name != 'password1' and field.name != 'password2' %}
                             value="{{ field.value }}"
                         {% endif %}
-                        class="textinput textInput form-control form-input {% if field.errors %}invalid{% endif %}"
-                        id="id_{{ field.name }}" required>
-                        {% if field.name == 'password1' or field.name == 'password2' %}
-                        <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
-                        {% endif %}
+                        class="form-control form-input {% if field.errors %}is-invalid{% endif %}"
+                        id="{{ field.id_for_label }}" required>
+                    {% if field.name == 'password1' or field.name == 'password2' %}
+                    <i class="fas fa-eye-slash togglePassword" id="{{ field.name }}" onclick="togglePassword(this)"></i>
+                    {% endif %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 </div>
                 {% if form.errors %}
                     {% for error_message in field.errors %}
@@ -55,7 +56,7 @@
     </form>
     <div class="border-top pt-1 text-center">
         <small class="text-muted">
-            Already Have An Account? <a class="link-bl ml-2" href="{% url 'login' %}">Sign In</a>
+            Already Have An Account? <a class="link-bl ml-2" href="{% url 'user:login' %}">Sign In</a>
         </small>
     </div>
 </div>
