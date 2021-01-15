@@ -37,7 +37,7 @@ class UserLogInView(FormView):
         Assign request to get method or post method, first method been called.
         """
         if request.user.is_authenticated:
-            return redirect('profile')
+            return redirect('user:profile')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):

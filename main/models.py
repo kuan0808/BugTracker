@@ -25,18 +25,29 @@ class Project(models.Model):
     manager = models.ManyToManyField(
         get_user_model(),
         verbose_name=_('Manager'),
-        related_name="is_manager_in"
+        related_name="is_manager_in",
+        default=None,
+        blank=True,
     )
     member = models.ManyToManyField(
         get_user_model(),
         verbose_name=_('Member'),
-        related_name="is_member_in"
+        related_name="is_member_in",
+        default=None,
+        blank=True,
     )
     status = models.CharField(
         _('Status'),
         max_length=20,
         choices=Status.choices,
         default=Status.IN_PROGRESS
+    )
+    liked = models.ManyToManyField(
+        get_user_model(),
+        verbose_name=_('Liked by'),
+        related_name="likes",
+        default=None,
+        blank=True,
     )
     date_created = models.DateTimeField(
         _('Date created'),
@@ -49,6 +60,18 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.title}-{self.date_created}"
+
+    def open_ticket_count(self):
+        return self.tickets.filter(status='open').count()
+
+    def get_manager_name_set(self):
+        name_set = []
+        for manager in self.manager.all():
+            name_set.append(manager.last_name)
+            name_set.append(manager.first_name)
+        name_set = set(name_set)
+        name_set = ' '.join(name_set)
+        return name_set
 
     class Meta:
         verbose_name = _('Project')
@@ -117,7 +140,7 @@ class Ticket(models.Model):
         get_user_model(),
         on_delete=models.SET(user_deleted),
         related_name="is_assigned_to",
-        verbose_name=_('Assignment')
+        verbose_name=_('Assignment'),
     )
 
     date_created = models.DateTimeField(

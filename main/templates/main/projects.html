@@ -1,167 +1,182 @@
-{% extends 'main/base.html' %} {% load static %} {% load i18n %} {% block
-content %}
+{% extends 'main/base.html' %}
+{% load static %}
+{% load i18n %}
 
-<style type="text/css"></style>
-
-<div class="container">
-  <div class="row w-100">
-    <h2 class="col-12 mt-4 p-0 brand-title">{% trans "My Projects" %}</h2>
-    <div class="col-12">
-      <form class="row" method="GET" id="filter_form" name="filter_form">
-        {% csrf_token %}
-        <div class="col-6">
-          <button
-            class="btn btn-primary"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#filter_options"
-            aria-expanded="false"
-            aria-controls="filter_options"
-          >
-            Filter
-          </button>
-          <div class="collapse" id="filter_options">
-            <div class="card card-body">
-              <div class="btn-group">
-  <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Action
-  </button>
-  <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="#">Action</a></li>
-    <li><a class="dropdown-item" href="#">Another action</a></li>
-    <li><a class="dropdown-item" href="#">Something else here</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="#">Separated link</a></li>
-  </ul>
-</div>
-              <select
-                class="form-select"
-                name="operator"
-                id="operator"
-              ></select>
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <button
-            class="btn btn-primary"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#sort_options"
-            aria-expanded="false"
-            aria-controls="sort_options"
-          >
-            Sort by
-          </button>
-          <div class="collapse" id="sort_options">
-            <div class="card card-body">
-              <div class="input-group">
-                <select class="form-select" name="order_by">
-                  <option value="date_created" selected>
-                    {% trans 'Create date' %}
-                  </option>
-                  <option value="latest">{% trans 'Last update' %}</option>
-                </select>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    name="reverse_or_not"
-                    id="reverse_or_not"
-                  />
-                  <label class="form-check-label" for="reverse_or_not">
-                    Reverse
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- FILTERED Pagination -->
-    <div class="d-flex flex-column m-auto pagination mt-5">
-      <nav aria-label="Page navigation">
-        <ul class="pagination pg-grey justify-content-center">
-          {% if page_obj.has_previous %}
-            <li class="page-item">
-              <button
-                class="page-link"
-                form="filter_form"
-                type="submit"
-                name="page"
-                value="{{ page_obj.previous_page_number }}"
-              >
-                Previous
-              </button>
-            </li>
-          {% endif %}
-          {% for i in page_obj.paginator.page_range %}
-            {% if page_obj.number == i %}
-              <li class="page-item active">
-                <button class="page-link">{{ i }}</button>
-              </li>
-            {% else %}
-              <li class="page-item">
-                <button
-                  class="page-link"
-                  form="filter_form"
-                  type="submit"
-                  name="page"
-                  value="{{ i }}"
-                >
-                  {{ i }}
-                </button>
-              </li>
-            {% endif %}
-          {% endfor %}
-          {% if page_obj.has_next %}
-            <li class="page-item">
-              <button
-                class="page-link"
-                form="filter_form"
-                type="submit"
-                name="page"
-                value="{{ page_obj.next_page_number }}"
-              >
-                Next
-              </button>
-            </li>
-            <li class="page-item">
-              <button
-                class="page-link"
-                form="filter_form"
-                type="submit"
-                name="page"
-                value="{{ page_obj.paginator.num_pages }}"
-              >
-                Last
-              </button>
-            </li>
-          {% endif %}
-        </ul>
-      </nav>
-    </div>
-    <!-- end pagination-->
-
-    <div class="row form-card mx-auto mt-4" style="max-width: 1300px">
-      <div class="col-3 mb-4">
-        <button type="button" class="btn custom-btn rounded-pill">
-          Create Project
-        </button>
+{% block content %}
+<div class="ui centered stackable grid container">
+  <div class="center aligned sixteen wide column">
+    <h2 class="brand-title">{% trans "My Projects" %}</h2>
+  </div>
+  <div class="left floated four wide column">
+    <button class="ui primary button rounded-pill">
+      {% trans "Create Project" %}
+    </button>
+  </div>
+  <div class="right aligned four wide column">
+    <div class="ui search">
+      <div class="ui fluid icon input">
+        <input class="prompt" type="text" placeholder="Search...">
+        <i class="search icon"></i>
       </div>
-      <div class="w-100"></div>
-      <div class="col-3">1q34124e</div>
     </div>
-    {% include 'snippets/pagination.html' with objects=projects %}
-    {% endblock content %}
-    {% block javascripts %}
-
-    <script type="text/javascript">
-      const filter_box = document.getElementById("filter_box");
-      const sort_box = document.getElementById("sort_box");
-    </script>
-    {% endblock javascripts %}
   </div>
 </div>
+  <table id="myTable" class="ui striped yellow table">
+    <thead>
+      <tr>
+        <th class="one wide"></th>
+        <th class="one wide">Tickets</th>
+        <th class="seven wide">Title</th>
+        <th class="three wide">Creat Date</th>
+        <th class="two wide">Manager</th>
+        <th class="two wide"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for project in projects %}
+      <tr>
+      {% if request.user in project.liked.all %}
+        <td class="middle aligned content" data-order="0">
+          <i role="button"
+              class="center aligned ui heart icon red"
+              data-value="{{ project.id }}"
+              data-url="{% url 'main:project-like-unlike' %}"
+              data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove from favourite">
+          </i>
+      {% else %}
+        <td class="middle aligned content" data-order="1">
+          <i role="button"
+              class="center aligned ui heart icon outline"
+              data-value="{{ project.id }}"
+              data-url="{% url 'main:project-like-unlike' %}"
+              data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add to favourite">
+          </i>
+      {% endif %}
+        {% csrf_token %}
+        </td>
+        <td class="middle aligned content">
+          <h2 class="ui green center aligned header">{{ project.open_ticket_count }}</h2>
+        </td>
+        <td class="middle aligned content">{{ project.title }}</td>
+        <td class="middle aligned content">{{ project.date_created | date:"j/ N/ Y" }}</td>
+        {% if request.user in project.manager.all %}
+        <td class="middle aligned content" data-order="0" data-search="{{ request.user.get_full_name }}">
+            <a class="ui small labeled icon button" href="#">
+              <i class="user icon"></i>
+              Manage
+            </a>
+        {% else %}
+        <td class="middle aligned content" data-order="1" data-search="{{ project.get_manager_name_set }}">
+          {% for manager in project.manager.all %}
+            <div class="text">
+              <img class="ui avatar image" src="{{ manager.profile.image.url }}">
+              {{ manager.get_full_name }}
+            </div>
+          {% endfor %}
+        {% endif %}
+        </td>
+        <td class="middle aligned content">
+          <a class="ui small right labeled icon blue button" href="#">
+            <i class="right arrow icon"></i>
+            Detail
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th></th>
+        <th>Tickets</th>
+        <th>Title</th>
+        <th>Creat Date</th>
+        <th>Manager</th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+<script>
+  $(document).ready( function () {
+    // Setup - add a text input to each footer cell
+    $('tfoot th').each( function () {
+        var title = $(this).text();
+        if (title !== '') {
+          $(this).html( '<div class="ui mini icon input">'+
+                        '<input type="text" placeholder="Search  '+title+'..">'+
+                        '<i class="search icon"></i>'+
+                        '</div>' );
+        }
+    } );
+    var table = $('#myTable').DataTable({
+      initComplete: function () {
+        // Apply the search
+        this.api().columns().every( function () {
+            var that = this;
+            $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                if ( that.search() !== this.value ) {
+                    that
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+      },
+      dom: "<'ui centered stackable grid container'"+
+                "<'sixteen wide column'tr>"+
+                "<'left floated three wide column'l>"+
+                "<'center aligned four wide column'i>"+
+                "<'right aligned nine wide column'p>"+
+            ">",
+      pagingType: "full_numbers",
+      order: [[0, 'asc'], [3, 'asc']],
+      columnDefs :[
+        {
+          targets: 0,
+          searchable: false
+        },
+        {
+          targets: 3,
+          className: 'single line'
+        },
+        {
+          targets: -1,
+          orderable: false,
+          searchable: false
+        },
+      ]
+    });
+    $('input').on( 'keyup change clear', function () {
+          table
+            .search( this.value )
+            .draw();
+    } );
+    $('.heart.icon').click(function () {
+      const project_id = $(this).attr('data-value')
+      const url = $(this).attr('data-url')
+      var like_button = $(this)
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: {
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+          'project_id': project_id
+        },
+        success: function (response) {
+          like_button.toggleClass("outline")
+          like_button.toggleClass("red")
+          if (like_button.hasClass("red")) {
+            like_button.attr('title', 'Remove from favourite')
+          } else {
+            like_button.attr('title', 'Add to favourite')
+          }
+          console.log(response.data)
+        },
+        error: function (response) {
+          console.log("error")
+        }
+      })
+    })
+  } );
+</script>
+{% endblock content %}
