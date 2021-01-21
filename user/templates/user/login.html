@@ -47,7 +47,8 @@
         </small>
     </div>
 </div>
-
+{% endblock content %}
+{% block javascripts %}
 <script type="text/javascript">
     function togglePassword(element){
         var password_field = element.previousElementSibling;
@@ -57,4 +58,4 @@
         element.classList.toggle('fa-eye');
     }
 </script>
-{% endblock content %}
+{% endblock javascripts %}

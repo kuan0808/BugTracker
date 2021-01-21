@@ -23,7 +23,7 @@
                 </a>
             </div>
             <div class="mt-2">
-                <p>{% trans "Welcome, " %}<strong>{% trans user.username %}</strong></p>
+                <h3>{% trans "Welcome, " %}<strong>{% trans user.username %}</strong></h3>
             </div>
         </div>
 
@@ -77,41 +77,46 @@
 {% block javascripts %}
 <script type="text/javascript">
     window.onresize = windowSizeCheck;
-        function openSide() {
-            var w = window.innerWidth;
-			document.getElementById(
-				"sidebar").style.marginLeft = "0px";
-			document.getElementById(
-				"content").style.marginLeft = "250px";
+    const overlay = document.getElementById("overlay")
+    const sidebar_open_btn = document.getElementById("open-side")
+    overlay.addEventListener("click", e=>{
+        closeSide()
+    })
+    function openSide() {
+        var w = window.innerWidth;
+        document.getElementById(
+            "sidebar").style.marginLeft = "0px";
+        document.getElementById(
+            "content").style.marginLeft = "250px";
+        document.getElementById(
+            "open-side").style.display = "none";
+        if (w <= 960) {
             document.getElementById(
-				"open-side").style.display = "none";
-            if (w <= 960) {
-                document.getElementById(
-				"overlay").classList.add("active");
-                document.getElementById(
-				"content").style.marginLeft = "0px";
-		    }
+            "overlay").classList.add("active");
+            document.getElementById(
+            "content").style.marginLeft = "0px";
         }
-		function closeSide() {
-			document.getElementById(
-				"sidebar").style.marginLeft = "-250px";
-			document.getElementById(
-				"content").style.marginLeft = "0px";
+    }
+    function closeSide() {
+        document.getElementById(
+            "sidebar").style.marginLeft = "-250px";
+        document.getElementById(
+            "content").style.marginLeft = "0px";
+        document.getElementById(
+            "open-side").style.display = "block";
+        document.getElementById(
+            "overlay").classList.remove("active");
+    }
+    function windowSizeCheck() {
+        var w = window.innerWidth;
+        var x = document.getElementById("sidebar");
+        if (w <= 960 && x.style.marginLeft == "0px") {
             document.getElementById(
-				"open-side").style.display = "block";
+            "overlay").classList.add("active");
             document.getElementById(
-				"overlay").classList.remove("active");
-		}
-        function windowSizeCheck() {
-            var w = window.innerWidth;
-            var x = document.getElementById("sidebar");
-            if (w <= 960 && x.style.marginLeft == "0px") {
-                document.getElementById(
-				"overlay").classList.add("active");
-                document.getElementById(
-				"content").style.marginLeft = "0px";
-            }
+            "content").style.marginLeft = "0px";
         }
+    }
 </script>
 {% endblock javascripts %}
 

@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
 
+import uuid
+
 
 def user_deleted():
     return get_user_model().objects.get_or_create(username="deleted")[0]
@@ -13,6 +15,12 @@ class Project(models.Model):
         IN_PROGRESS = ('in_progress', _('IN PROGRESS'))
         STOPPED = ('stopped', _('STOPPED'))
         FINISH = ('finish', _('FINISH'))
+    # uuid = models.UUIDField(
+    #     _('UUID'),
+    #     default=uuid.uuid4,
+    #     editable=False,
+    #     unique=True
+    # )
 
     title = models.CharField(
         _('Title'),
@@ -45,7 +53,7 @@ class Project(models.Model):
     liked = models.ManyToManyField(
         get_user_model(),
         verbose_name=_('Liked by'),
-        related_name="likes",
+        related_name="liked",
         default=None,
         blank=True,
     )

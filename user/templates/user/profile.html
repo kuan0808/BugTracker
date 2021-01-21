@@ -75,10 +75,10 @@
     }
 </style>
 
-<h2 class="text-center mt-4 p-0 brand-title">{% trans "My Profile" %}</h2>
+<h2 class="text-center brand-title">{% trans "My Profile" %}</h2>
 <div class="container-fluid">
 <div class="row form-card mx-auto mt-4 ">
-    <div class="col-10 offset-1">
+    <div class="col-12">
         <form id="profile-form" method="POST" class="row g-1">
             {% csrf_token %}
             <div class="col-6 offset-3 my-3 text-center">
@@ -224,9 +224,8 @@
             })
         }
     }
-
     function functionProfile(){
-        document.getElementById("profile").classList.add("active");
+        document.querySelector("#profile").classList.toggle("active");
     }
     function showAlert(){
         const alert_str = document.getElementById('alert-str');

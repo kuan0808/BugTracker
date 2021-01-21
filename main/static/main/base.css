@@ -5,7 +5,7 @@
   font-family: "Roboto", sans-serif;
   --bg-primary: #37426f;
   --bg-secondary: #b1bce6;
-  --transition-speed: 600ms;
+  --transition-speed: 500ms;
 }
 
 /* --------------------------------------------------------------------------------------------
@@ -96,9 +96,9 @@ a:focus {
 
 .brand-title {
   padding: 0px;
+  margin: 1.5rem 0 1.5rem 0;
   font-weight: 600;
-  font-size: 2rem;
-  padding: 0.5rem 0 0.5rem 0;
+  font-size: 2rem !important;
 }
 
 .form-input {
@@ -110,7 +110,7 @@ a:focus {
   display: block;
   top: 105%;
   right: 0px;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
 }
 
 .togglePassword {
@@ -127,10 +127,27 @@ a:focus {
 .link-bl {
   color: blue;
   text-decoration: underline;
+  font-size: 0.8rem;
 }
 
 .link-bl:hover {
-  color: lightskyblue;
+  color: #7386d5;
+  background: #fff;
+}
+
+.sortable::after {
+  content: " \2191 \2193";
+  color: rgba(32, 32, 32, 0.3);
+}
+
+.sortable.desc::after {
+  content: " \2191";
+  color: rgba(0, 0, 0);
+}
+
+.sortable.asc::after {
+  content: " \2193";
+  color: rgba(0, 0, 0);
 }
 
 /* ---------------------------------------------------
@@ -143,6 +160,11 @@ a:focus {
 
 .bg-color {
   background-color: var(--bg-primary);
+}
+
+.navbar-toggler:hover {
+  color: #7386d5;
+  background: #fff;
 }
 
 /*===========create a square(circle) img!!!!!!!===============*/
@@ -246,7 +268,8 @@ a:focus {
 }
 
 #sidebar ul li.active {
-  background-color: #6d7fcc;
+  color: #7386d5;
+  background: #fff;
 }
 
 #sidebar ul li a {
@@ -260,6 +283,7 @@ a:focus {
   background: #fff;
 }
 
+/* align the dropdown arrow key to the right */
 .dropdown-toggle::after {
   display: block;
   position: absolute;

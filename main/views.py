@@ -3,9 +3,10 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render
 from django.views.generic import (
     View,
+    TemplateView
 )
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import (
     EmptyPage,
     PageNotAnInteger,
@@ -24,13 +25,25 @@ from django.http import JsonResponse
 
 
 @method_decorator(login_required, name="dispatch")
-class ProjectListView(View):
+class ProjectListView(TemplateView):
+    template_name = 'main/projects.html'
+
     def get(self, request):
-        qs = Project.objects.all()
+        num_ticket = Count('tickets')
+        liked_or_not = Count('liked',
+                             filter=Q(liked__id__exact=request.user.id)
+                             )
+        qs = (Project.objects
+              .annotate(num_tickets=num_ticket)
+              .annotate(liked_or_not=liked_or_not)
+              )
+        qs_json = list(qs.values())
+        if request.is_ajax():
+            return JsonResponse({data: qs_json}, safe=False)
         return render(request, 'main/projects.html', {'projects': qs})
 
 
-@login_required
+@ login_required
 def projectLikeUnlike(request):
     user = request.user
     if request.method == 'POST':
@@ -41,6 +54,12 @@ def projectLikeUnlike(request):
         else:
             project.liked.add(user)
         return JsonResponse({"data": "success"}, safe=False)
+
+
+class ProjectDetailTicketListView(View):
+    def get(self, request):
+        context = {}
+        return render(request, 'main/project-detail.html', context)
 
 
 class ProjectMemberManage(View):

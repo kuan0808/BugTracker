@@ -1,182 +1,318 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% load i18n %}
-
 {% block content %}
-<div class="ui centered stackable grid container">
-  <div class="center aligned sixteen wide column">
-    <h2 class="brand-title">{% trans "My Projects" %}</h2>
-  </div>
-  <div class="left floated four wide column">
-    <button class="ui primary button rounded-pill">
-      {% trans "Create Project" %}
-    </button>
-  </div>
-  <div class="right aligned four wide column">
-    <div class="ui search">
-      <div class="ui fluid icon input">
-        <input class="prompt" type="text" placeholder="Search...">
-        <i class="search icon"></i>
+<h2 class="text-center brand-title">{% trans "My Projects" %}</h2>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-4 my-auto">
+      Show
+      <select class="form-select-sm d-inline" id="per-page">
+        <option value="10" selected>10</option>
+        <option value="25">25</option>
+        <option value="all">All</option>
+      </select>
+      Entries
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-8 ms-auto mb-3">
+      <div class="row g-0">
+        <div class="col">
+          <input class="form-control border-secondary border-end-0 rounded-0 rounded-start"
+                  type="search"
+                  placeholder="Search...">
+        </div>
+        <div class="col-auto">
+          <div class="btn bg-white border-secondary border-start-0 rounded-0 rounded-end">
+              <i class="fa fa-search"></i>
+          </div>
+        </div>
+        <div class="col-auto ms-3">
+          <button class="btn btn-info">
+            <i class="bi bi-funnel-fill"></i>
+          </button>
+        </div>
       </div>
+    </div>
+    <div class="col-12 overflow-auto">
+      <table id="myTable" class="table table-hover table-light align-middle text-center">
+        <thead>
+          <tr class="table-info fs-5">
+            <th class="sortable d-none">ID</th>
+            <th class="sortable"><i class="bi bi-heart-fill" style="color:red;"></i></th>
+            <th class="sortable">Title</th>
+            <th class="sortable">Create Date</th>
+            <th class="sortable">Manager</th>
+            <th class="sortable d-none d-md-table-cell">Open Tickets</th>
+            <th><button class="btn btn-secondary btn-sm" id="reset-btn">Reset</button></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for project in projects %}
+        {% csrf_token %}
+          <tr>
+            <td class="d-none">{{ project.id }}</td>
+          {% if request.user in project.liked.all %}
+            <td class="middle aligned content" data-order="0">
+              <i role="button"
+                  class="bi bi-heart-fill"
+                  id="like-btn"
+                  style="color: red;"
+                  data-value="{{ project.id }}"
+                  data-url="{% url 'main:project-like-unlike' %}"
+                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove from favourite">
+              </i>
+          {% else %}
+            <td class="middle aligned content" data-order="1">
+              <i role="button"
+                  class="bi bi-heart"
+                  id="like-btn"
+                  style="color: red;"
+                  data-value="{{ project.id }}"
+                  data-url="{% url 'main:project-like-unlike' %}"
+                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add to favourite">
+              </i>
+          {% endif %}
+            {% csrf_token %}
+            <td>
+              <h4>{{ project.title }}</h4>
+            </td>
+            </td>
+            <td>{{ project.date_created | date:"j/ N/ Y" }}</td>
+            {% if request.user in project.manager.all %}
+            <td data-order="0" data-search="{{ request.user.get_full_name }}">
+              <a class="btn btn-outline-secondary btn-sm" id="manage-btn" href="#">
+                <img class="ui avatar image d-none d-md-inline-block" src="{{ request.user.profile.image.url }}">
+                  {{ request.user.get_full_name }}
+              </a>
+            {% else %}
+            <td data-order="1" data-search="{{ project.get_manager_name_set }}">
+              {% for manager in project.manager.all %}
+                <div class="text">
+                  <img class="ui avatar image d-none d-md-inline-block" src="{{ manager.profile.image.url }}">
+                  {{ manager.get_full_name }}
+                </div>
+              {% endfor %}
+            {% endif %}
+            </td>
+            <td class="d-none d-md-table-cell">
+              <h4>{{ project.open_ticket_count }}</h4>
+            </td>
+            <td>
+              <a class="btn btn-primary d-none d-lg-block" href="#">
+                Detail
+              </a>
+              <a class="btn btn-primary d-lg-none d-inline-block" href="#">
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="d-none"></td>
+            <td></td>
+            <td>Title</td>
+            <td>Creat Date</td>
+            <td>Manager</td>
+            <td class="d-none d-md-table-cell">Open Tickets</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="col-md-8 col-sm-12 ms-auto mb-3">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+          <li class="page-item" data-page="previous">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" data-page="next">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
-  <table id="myTable" class="ui striped yellow table">
-    <thead>
-      <tr>
-        <th class="one wide"></th>
-        <th class="one wide">Tickets</th>
-        <th class="seven wide">Title</th>
-        <th class="three wide">Creat Date</th>
-        <th class="two wide">Manager</th>
-        <th class="two wide"></th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for project in projects %}
-      <tr>
-      {% if request.user in project.liked.all %}
-        <td class="middle aligned content" data-order="0">
-          <i role="button"
-              class="center aligned ui heart icon red"
-              data-value="{{ project.id }}"
-              data-url="{% url 'main:project-like-unlike' %}"
-              data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove from favourite">
-          </i>
-      {% else %}
-        <td class="middle aligned content" data-order="1">
-          <i role="button"
-              class="center aligned ui heart icon outline"
-              data-value="{{ project.id }}"
-              data-url="{% url 'main:project-like-unlike' %}"
-              data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add to favourite">
-          </i>
-      {% endif %}
-        {% csrf_token %}
-        </td>
-        <td class="middle aligned content">
-          <h2 class="ui green center aligned header">{{ project.open_ticket_count }}</h2>
-        </td>
-        <td class="middle aligned content">{{ project.title }}</td>
-        <td class="middle aligned content">{{ project.date_created | date:"j/ N/ Y" }}</td>
-        {% if request.user in project.manager.all %}
-        <td class="middle aligned content" data-order="0" data-search="{{ request.user.get_full_name }}">
-            <a class="ui small labeled icon button" href="#">
-              <i class="user icon"></i>
-              Manage
-            </a>
-        {% else %}
-        <td class="middle aligned content" data-order="1" data-search="{{ project.get_manager_name_set }}">
-          {% for manager in project.manager.all %}
-            <div class="text">
-              <img class="ui avatar image" src="{{ manager.profile.image.url }}">
-              {{ manager.get_full_name }}
-            </div>
-          {% endfor %}
-        {% endif %}
-        </td>
-        <td class="middle aligned content">
-          <a class="ui small right labeled icon blue button" href="#">
-            <i class="right arrow icon"></i>
-            Detail
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot>
-      <tr>
-        <th></th>
-        <th>Tickets</th>
-        <th>Title</th>
-        <th>Creat Date</th>
-        <th>Manager</th>
-        <th></th>
-      </tr>
-    </tfoot>
-  </table>
-
+{% endblock content %}
+{% block javascripts %}
 <script>
-  $(document).ready( function () {
-    // Setup - add a text input to each footer cell
-    $('tfoot th').each( function () {
-        var title = $(this).text();
-        if (title !== '') {
-          $(this).html( '<div class="ui mini icon input">'+
-                        '<input type="text" placeholder="Search  '+title+'..">'+
-                        '<i class="search icon"></i>'+
-                        '</div>' );
-        }
-    } );
-    var table = $('#myTable').DataTable({
-      initComplete: function () {
-        // Apply the search
-        this.api().columns().every( function () {
-            var that = this;
-            $( 'input', this.footer() ).on( 'keyup change clear', function () {
-                if ( that.search() !== this.value ) {
-                    that
-                        .search( this.value )
-                        .draw();
-                }
-            } );
-        } );
-      },
-      dom: "<'ui centered stackable grid container'"+
-                "<'sixteen wide column'tr>"+
-                "<'left floated three wide column'l>"+
-                "<'center aligned four wide column'i>"+
-                "<'right aligned nine wide column'p>"+
-            ">",
-      pagingType: "full_numbers",
-      order: [[0, 'asc'], [3, 'asc']],
-      columnDefs :[
-        {
-          targets: 0,
-          searchable: false
-        },
-        {
-          targets: 3,
-          className: 'single line'
-        },
-        {
-          targets: -1,
-          orderable: false,
-          searchable: false
-        },
-      ]
-    });
-    $('input').on( 'keyup change clear', function () {
-          table
-            .search( this.value )
-            .draw();
-    } );
-    $('.heart.icon').click(function () {
-      const project_id = $(this).attr('data-value')
-      const url = $(this).attr('data-url')
-      var like_button = $(this)
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: {
-          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-          'project_id': project_id
-        },
-        success: function (response) {
-          like_button.toggleClass("outline")
-          like_button.toggleClass("red")
-          if (like_button.hasClass("red")) {
-            like_button.attr('title', 'Remove from favourite')
-          } else {
-            like_button.attr('title', 'Add to favourite')
+  (function() {
+    var filterObject = {
+      "Title": [["contains", "icontain"]],
+      "Create date": [["before", "lt"], ["since", "gte"], ["on", "exact"]],
+      "Manager": [["contain", "icontain"]]
+    };
+    var table = document.getElementById("myTable");
+    var rows = Array.from(document.getElementsByTagName("tr"));
+    var headers = Array.from(document.getElementsByTagName("th"));
+    rows = rows.slice(1, -1);
+    var reset_btn = document.getElementById("reset-btn");
+    var manageBtn = document.querySelector("#manage-btn");
+    var paginator = document.querySelector(".pagination");
+    var page_index, page_array
+    var per_page_obj = document.querySelector("#per-page");
+    var num_pages = Math.ceil(rows.length / per_page_obj.value);
+    var like_btns = Array.from(document.querySelectorAll("#like-btn"));
+
+    initPagination()
+    initTable()
+
+    like_btns.forEach(item => {
+      item.addEventListener("click", e => {
+        let url = item.getAttribute("data-url")
+        let id = item.getAttribute("data-value")
+        $.ajax({
+          type: 'POST',
+          url: url,
+          data: {
+            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+            'project_id': id
+          },
+          success: function (response) {
+            item.classList.toggle("bi-heart")
+            item.classList.toggle("bi-heart-fill")
+            if (item.classList.contains("bi-heart-fill")) {
+              item.setAttribute('title', 'Remove from favourite')
+              item.parentNode.setAttribute("data-order", "0")
+            } else {
+              item.setAttribute('title', 'Add to favourite')
+              item.parentNode.setAttribute("data-order", "1")
+            }
+          },
+          error: function (response) {
+            console.log("error")
           }
-          console.log(response.data)
-        },
-        error: function (response) {
-          console.log("error")
+        })
+      })
+    })
+
+    per_page_obj.addEventListener("change", e => {
+      renderTable()
+      num_pages = Math.ceil(rows.length / per_page_obj.value);
+    })
+
+    page_array.forEach(item => {
+      item.addEventListener("click", e => {
+        let current = paginator.querySelector("li.active")
+        let current_value = current.getAttribute("data-page")
+        let press = item.getAttribute("data-page")
+        if (press == "previous") {
+          console.log(press)
+          if (current_value !== "1") {
+            current.classList.remove("active")
+            current.previousSibling.classList.add("active")
+            page_index =  Number(current_value) - 1
+          } else {
+            page_index = 1
+          }
+        } else if (press == "next") {
+          if (current_value !== num_pages.toString()) {
+            current.classList.remove("active")
+            current.nextSibling.classList.add("active")
+            page_index = Number(current_value) + 1
+          } else {
+            page_index = Number(current_value)
+          }
+        } else {
+          current.classList.remove("active")
+          item.classList.add("active")
+          page_index = Number(press)
+        }
+        renderTable()
+      })
+    })
+
+    reset_btn.addEventListener("click", () => {
+      resetSort()
+      initTable()
+    })
+
+    headers.forEach((item, index) => {
+      item.addEventListener('click', ()=>{
+        if (item.classList.contains("sortable")) {
+          resetSort(index)
+          if (item.classList.contains("asc")) {
+            sort(index, "desc")
+          } else {
+            sort(index, "asc")
+          }
+          renderTable()
         }
       })
     })
-  } );
+    function initTable() {
+      sort(undefined, "desc");
+      sort(1, "asc");
+      renderTable()
+    }
+    function initPagination() {
+      let last_child = paginator.querySelector("li:last-child")
+      for (let i=0; i<num_pages; i++) {
+        let obj = document.createElement("li")
+        obj.setAttribute("class", "page-item")
+        obj.setAttribute("data-page", `${i+1}`)
+        if (i == 0) {
+          obj.classList.add("active")
+        }
+        obj.innerHTML = `<a class="page-link" href="#">${i+1}</a>`
+        paginator.insertBefore(obj, last_child)
+      }
+      page_index = 1
+      page_array = Array.from(paginator.querySelectorAll("li"))
+    }
+    function compareValues(a, b) {
+      if (isNaN(Number(a) || Number(b))) {
+        return a.localeCompare(b);
+      }else {
+        return (a<b) ? -1 : (a>b) ? 1 : 0;
+      }
+    }
+    function resetSort(exclude_index=null) {
+      for (let i=0; i<headers.length; i++) {
+        if (!exclude_index) {
+          headers[i].classList.remove("asc")
+          headers[i].classList.remove("desc")
+        } else if (i !== exclude_index) {
+          headers[i].classList.remove("asc")
+          headers[i].classList.remove("desc")
+        }
+      }
+    }
+    function sort(index=3, sortOrder) {
+      let qs = `td:nth-child(${index+1})`
+      rows.sort((r1, r2) => {
+        let t1 = r1.querySelector(qs).getAttribute("data-order") || r1.querySelector(qs).textContent;
+        let t2 = r2.querySelector(qs).getAttribute("data-order") || r2.querySelector(qs).textContent;
+        return compareValues(t1, t2)
+      })
+      if (sortOrder == 'desc') {
+        rows = rows.reverse()
+        headers[index].classList.remove("asc")
+        headers[index].classList.add("desc")
+      } else {
+        headers[index].classList.add("asc")
+        headers[index].classList.remove("desc")
+      }
+    }
+    function renderTable() {
+      let start = page_index * Number(per_page_obj.value) - Number(per_page_obj.value)
+      let end = page_index * Number(per_page_obj.value)
+      let rows_rendered = rows.slice(start, end)
+      table.tBodies[0].innerHTML = ""
+      rows_rendered.forEach(row => table.tBodies[0].appendChild(row));
+    }
+  })();
 </script>
-{% endblock content %}
+{% endblock javascripts %}
+
+
+
+
+
+
