@@ -18,6 +18,7 @@
       <div class="row g-0">
         <div class="col">
           <input class="form-control border-secondary border-end-0 rounded-0 rounded-start"
+                  id="search-input"
                   type="search"
                   placeholder="Search...">
         </div>
@@ -39,10 +40,10 @@
           <tr class="table-info fs-5">
             <th class="sortable d-none">ID</th>
             <th class="sortable"><i class="bi bi-heart-fill" style="color:red;"></i></th>
-            <th class="sortable">Title</th>
-            <th class="sortable">Create Date</th>
-            <th class="sortable">Manager</th>
-            <th class="sortable d-none d-md-table-cell">Open Tickets</th>
+            <th class="sortable searchable">Title</th>
+            <th class="sortable searchable">Create Date</th>
+            <th class="sortable searchable">Manager</th>
+            <th class="sortable searchable d-none d-md-table-cell">Open Tickets</th>
             <th><button class="btn btn-secondary btn-sm" id="reset-btn">Reset</button></th>
           </tr>
         </thead>
@@ -73,16 +74,22 @@
               </i>
           {% endif %}
             {% csrf_token %}
-            <td>
+            <td data-search="{{ project.title }}">
               <h4>{{ project.title }}</h4>
             </td>
             </td>
-            <td>{{ project.date_created | date:"j/ N/ Y" }}</td>
+            <td>{{ project.date_created | date:"m/j/Y" }}</td>
             {% if request.user in project.manager.all %}
             <td data-order="0" data-search="{{ request.user.get_full_name }}">
               <a class="btn btn-outline-secondary btn-sm" id="manage-btn" href="#">
-                <img class="ui avatar image d-none d-md-inline-block" src="{{ request.user.profile.image.url }}">
+                <div id="visible-text">
+                  <img class="ui avatar image d-none d-md-inline-block" src="{{ request.user.profile.image.url }}">
                   {{ request.user.get_full_name }}
+                </div>
+                <div class="d-none" id="hidden-text">
+                  <i class="bi bi-person-lines-fill"></i>
+                  Manage<p class="d-none d-md-inline-block ms-1">User</p>
+                </div>
               </a>
             {% else %}
             <td data-order="1" data-search="{{ project.get_manager_name_set }}">
@@ -95,7 +102,7 @@
             {% endif %}
             </td>
             <td class="d-none d-md-table-cell">
-              <h4>{{ project.open_ticket_count }}</h4>
+              {{ project.open_ticket_count }}
             </td>
             <td>
               <a class="btn btn-primary d-none d-lg-block" href="#">
@@ -153,16 +160,34 @@
     var headers = Array.from(document.getElementsByTagName("th"));
     rows = rows.slice(1, -1);
     var reset_btn = document.getElementById("reset-btn");
-    var manageBtn = document.querySelector("#manage-btn");
+    var manage_btn = document.querySelectorAll("#manage-btn");
     var paginator = document.querySelector(".pagination");
-    var page_index, page_array
+    var page_index, page_array, num_pages, per_page, rows_rendered_all
     var per_page_obj = document.querySelector("#per-page");
-    var num_pages = Math.ceil(rows.length / per_page_obj.value);
     var like_btns = Array.from(document.querySelectorAll("#like-btn"));
+    var search_input = document.getElementById("search-input");
 
     initPagination()
     initTable()
+    renderTable()
 
+    manage_btn.forEach(item => {
+      item.addEventListener("mouseenter", e => {
+        item.children[0].classList.toggle("d-none")
+        item.children[1].classList.toggle("d-none")
+      })
+      item.addEventListener("mouseleave", e => {
+        item.children[0].classList.toggle("d-none")
+        item.children[1].classList.toggle("d-none")
+      })
+    })
+    search_input.addEventListener("keyup", e => {
+      let value = e.target.value.toUpperCase()
+      console.log(value)
+      filter(value)
+      initPagination()
+      renderTable()
+    })
     like_btns.forEach(item => {
       item.addEventListener("click", e => {
         let url = item.getAttribute("data-url")
@@ -193,44 +218,17 @@
     })
 
     per_page_obj.addEventListener("change", e => {
+      initPagination()
       renderTable()
-      num_pages = Math.ceil(rows.length / per_page_obj.value);
-    })
-
-    page_array.forEach(item => {
-      item.addEventListener("click", e => {
-        let current = paginator.querySelector("li.active")
-        let current_value = current.getAttribute("data-page")
-        let press = item.getAttribute("data-page")
-        if (press == "previous") {
-          console.log(press)
-          if (current_value !== "1") {
-            current.classList.remove("active")
-            current.previousSibling.classList.add("active")
-            page_index =  Number(current_value) - 1
-          } else {
-            page_index = 1
-          }
-        } else if (press == "next") {
-          if (current_value !== num_pages.toString()) {
-            current.classList.remove("active")
-            current.nextSibling.classList.add("active")
-            page_index = Number(current_value) + 1
-          } else {
-            page_index = Number(current_value)
-          }
-        } else {
-          current.classList.remove("active")
-          item.classList.add("active")
-          page_index = Number(press)
-        }
-        renderTable()
-      })
     })
 
     reset_btn.addEventListener("click", () => {
       resetSort()
+      filter("")
+      initPagination()
       initTable()
+      renderTable()
+      search_input.value = ""
     })
 
     headers.forEach((item, index) => {
@@ -242,17 +240,40 @@
           } else {
             sort(index, "asc")
           }
+          get_rows_rendered_all()
           renderTable()
         }
       })
     })
+    function get_rows_rendered_all() {
+      rows_rendered_all = []
+      rows.forEach((item) => {
+        if (item.style.display != "none") {
+          rows_rendered_all.push(item)
+        }
+      })
+      console.log(rows_rendered_all)
+    }
     function initTable() {
       sort(undefined, "desc");
       sort(1, "asc");
-      renderTable()
     }
     function initPagination() {
+      get_rows_rendered_all()
+      per_page = Number(per_page_obj.value) || rows_rendered_all.length
+      num_pages = Math.ceil(rows_rendered_all.length / per_page);
       let last_child = paginator.querySelector("li:last-child")
+      let first_child = paginator.querySelector("li:first-child")
+      paginator.innerHTML=""
+      paginator.appendChild(first_child)
+      paginator.appendChild(last_child)
+      if (num_pages <= 1) {
+        first_child.style.display = "none"
+        last_child.style.display = "none"
+      } else {
+        first_child.style.display = ""
+        last_child.style.display = ""
+      }
       for (let i=0; i<num_pages; i++) {
         let obj = document.createElement("li")
         obj.setAttribute("class", "page-item")
@@ -265,6 +286,35 @@
       }
       page_index = 1
       page_array = Array.from(paginator.querySelectorAll("li"))
+      page_array.forEach(item => {
+        item.addEventListener("click", e => {
+          let current = paginator.querySelector("li.active")
+          let current_value = current.getAttribute("data-page")
+          let press = item.getAttribute("data-page")
+          if (press == "previous") {
+            if (current_value !== "1") {
+              current.classList.remove("active")
+              current.previousSibling.classList.add("active")
+              page_index =  Number(current_value) - 1
+            } else {
+              page_index = 1
+            }
+          } else if (press == "next") {
+            if (current_value !== num_pages.toString()) {
+              current.classList.remove("active")
+              current.nextSibling.classList.add("active")
+              page_index = Number(current_value) + 1
+            } else {
+              page_index = Number(current_value)
+            }
+          } else {
+            current.classList.remove("active")
+            item.classList.add("active")
+            page_index = Number(press)
+          }
+          renderTable()
+        })
+      })
     }
     function compareValues(a, b) {
       if (isNaN(Number(a) || Number(b))) {
@@ -287,8 +337,8 @@
     function sort(index=3, sortOrder) {
       let qs = `td:nth-child(${index+1})`
       rows.sort((r1, r2) => {
-        let t1 = r1.querySelector(qs).getAttribute("data-order") || r1.querySelector(qs).textContent;
-        let t2 = r2.querySelector(qs).getAttribute("data-order") || r2.querySelector(qs).textContent;
+        let t1 = r1.querySelector(qs).getAttribute("data-order") || r1.querySelector(qs).textContent.trim();
+        let t2 = r2.querySelector(qs).getAttribute("data-order") || r2.querySelector(qs).textContent.trim();
         return compareValues(t1, t2)
       })
       if (sortOrder == 'desc') {
@@ -301,11 +351,36 @@
       }
     }
     function renderTable() {
-      let start = page_index * Number(per_page_obj.value) - Number(per_page_obj.value)
-      let end = page_index * Number(per_page_obj.value)
-      let rows_rendered = rows.slice(start, end)
-      table.tBodies[0].innerHTML = ""
-      rows_rendered.forEach(row => table.tBodies[0].appendChild(row));
+      if (rows_rendered_all.length == 0) {
+        table.tBodies[0].innerHTML = '<td colspan="7">No match found......</td>'
+      } else {
+        let start = page_index * per_page - per_page
+        let end = page_index * per_page
+        let rows_rendered = rows_rendered_all.slice(start, end)
+        table.tBodies[0].innerHTML = ""
+        rows_rendered.forEach(row => table.tBodies[0].appendChild(row));
+      }
+    }
+    function filter(value) {
+      splits = value.trim().split(/\s+/)
+      rows.forEach(item => item.style.display = "")
+      for (let i=0; i<splits.length; i++) {
+        for (let j=0; j<rows.length; j++) {
+          let columns = Array.from(rows[j].querySelectorAll("td"))
+          let count = 0
+          for (let k=0; k<columns.length; k++) {
+            if (headers[k].classList.contains("searchable")) {
+              let qs = columns[k].getAttribute("data-search") || columns[k].textContent.trim()
+              if (qs.toUpperCase().includes(splits[i])) {
+                count += 1
+              }
+            }
+          }
+          if (count == 0) {
+            rows[j].style.display = "none"
+          }
+        }
+      }
     }
   })();
 </script>
