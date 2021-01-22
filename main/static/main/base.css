@@ -45,7 +45,11 @@ body::-webkit-scrollbar-thumb {
   padding: 1.5vw 5vw 1.5vw 5vw;
   transition: all 0.3s;
 }
-
+mark {
+  background: yellow;
+  color: black;
+  padding: 0;
+}
 a,
 a:hover,
 a:focus {

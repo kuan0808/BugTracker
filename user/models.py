@@ -6,6 +6,8 @@ from django.utils import timezone
 from .managers import CustomUserManager
 from django.contrib.auth import get_user_model
 from PIL import Image
+from BugTracker.settings import MEDIA_URL
+import os
 
 
 class CustomUser(AbstractBaseUser):
@@ -71,6 +73,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+    @property
+    def get_absolute_image_url(self):
+        return os.path.join(MEDIA_URL, self.image.url)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

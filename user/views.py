@@ -10,7 +10,7 @@ from django.views.generic import (
     CreateView,
     FormView
 )
-from .models import CustomUser
+from .models import CustomUser, Profile
 from .forms import (
     UserRegisterForm,
     UserLoginForm,
@@ -52,13 +52,14 @@ class UserLogInView(FormView):
             return super().form_valid(form)
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('user:login')
 
 
 @login_required
-def ProfileView(request):
+def profileView(request):
     user_data = (request.POST or None)
     profile_data = (request.FILES or None)
     u_form = UserUpdateForm(user_data, instance=request.user)
@@ -78,3 +79,16 @@ def ProfileView(request):
         'p_form': p_form
     }
     return render(request, 'user/profile.html', context)
+
+
+@login_required
+def avatar_delete(request):
+    if request.is_ajax():
+        data = {}
+        user = request.user
+        obj = Profile.objects.filter(user=user)[0]
+        obj.image = 'default.png'
+        obj.save(update_fields=['image'])
+        data["status"] = "Avatar has been deleted !"
+        data["default_image_url"] = obj.get_absolute_image_url
+        return JsonResponse(data, safe=False)

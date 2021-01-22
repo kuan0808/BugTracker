@@ -7,8 +7,8 @@
         position: absolute;
         display: block;
         overflow: hidden;
-        width: 20%;
-        height: 20%;
+        width: 17%;
+        height: 17%;
         border-radius: 50%;
         border: 1px solid #b1bce6;
         top: 0;
@@ -62,7 +62,7 @@
     }
 
 
-    #upload-img {
+    #preview-img-area {
         position: absolute;
     }
     .img-drag-zone {
@@ -74,7 +74,6 @@
         background-color: rgba(0,0,0,0);
     }
 </style>
-
 <h2 class="text-center brand-title">{% trans "My Profile" %}</h2>
 <div class="container-fluid">
 <div class="row form-card mx-auto mt-4 ">
@@ -90,6 +89,16 @@
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                         </svg>
                     </label>
+                    <a class="btn position-absolute bottom-0 end-0 p-0"
+                        id="delete-icon"
+                        data-bs-toggle="modal" data-bs-target="#delete-modal">
+                        <i class="bi bi-trash"
+                            style="font-size:1.4rem;">
+                        </i>
+                        <i class="bi bi-trash-fill d-none"
+                            style="font-size:1.4rem;">
+                        </i>
+                    </a>
                 </div>
             </div>
             {% for field in u_form %}
@@ -102,7 +111,9 @@
                 {% endif %}
                 <div class="form-floating">
                     <input type="text"
-                        name="{{ field.name }}" class="form-control form-input"
+                        class="form-control form-input user-input"
+                        id="{{ field.id_for_label }}"
+                        name="{{ field.name }}"
                         {% if field.name == 'username' %}
                         value="{{ user.username }}"
                         {% elif field.name == 'first_name' %}
@@ -112,8 +123,7 @@
                         {% else %}
                         value="{{ user.email }}"
                         {% endif %}
-                        placeholder="{{ field.label }}" id="{{ field.id_for_label }}"
-                        onchange="showAlert()">
+                        placeholder="{{ field.label }}">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 </div>
                 {% if u_form.errors %}
@@ -148,57 +158,126 @@
                 <div class="img-explorer-container">
                     <div class="img-explorer-view">
                         <div class="crop-mask">
-                            <img src="" id="upload-img" style="top:50%; left:50%;">
+                            <img src="" id="preview-img-area" style="top:50%; left:50%;">
                         </div>
                         <div class="img-mask circle-mask"></div>
                         <div id="img-drag" class="img-drag-zone"></div>
                     </div>
                 </div>
-                <input type="range" id="ranger" class="form-range mt-4 px-5" min="0" max="100" step="1" value="0" onchange="imageResize(this)">
-                <form id="p_form" class="text-center">
-                    {% csrf_token %}
+                <input type="range" id="ranger" class="form-range mt-4 px-5" min="0" max="100" step="1" value="0">
+                <div class="text-center">
                     <label for="id_image" class="btn custom-btn" type="button">{% trans "Select an image" %}</label>
                     <div class="text-muted">{% trans "JPG, GIF or PNG image" %}</div>
-                    <input type="file" name="image" accept="image/*" id="id_image" class="d-none" onchange="showImage(this);">
-                </form>
+                    <input type="file" name="image" accept="image/*" id="id_image" class="d-none img-input">
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn custom-btn" data-bs-dismiss="modal" onclick="doCapture()">{% trans "Save" %}</button>
+                {% csrf_token %}
+                <button type="button" class="btn custom-btn" data-bs-dismiss="modal" id="img-save-btn">{% trans "Save" %}</button>
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
             </div>
         </div>
     </div>
 </div>
+<!-- Delete Modal -->
+<div class="modal fade text-dark" id="delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-danger" id="staticBackdropLabel">{% trans "Confirm Deletion" %}</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% trans "Do you sure that you want to delete your avatar ?" %}
+      </div>
+      <div class="modal-footer">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="avatar-delete-btn" data-bs-dismiss="modal">{% trans "Delete" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- End -->
 {% endblock content %}
 
 {% block javascripts %}
-<script type="text/javascript">
+<script>
+(function() {
     window.onload = functionProfile;
-    dragElement(document.getElementById("img-drag"));
-    const ranger = document.getElementById("ranger");
-    function doCapture(){
-        const profile_img = document.getElementById('profile-img')
-        const sidebarAvatar = document.getElementById('sidebar-avatar')
-        const upload_img = document.getElementById('upload-img')
-        const img_count = document.getElementById('id_image').files.length
-        const csrf = document.getElementsByName('csrfmiddlewaretoken')
-        const alertBox = document.querySelector('.alert-box')
-        const url = ""
-        const handleAlerts = (type, text) =>{
-            alertBox.innerHTML =
-            `<div class="alert bg-${type} alert-dismissible fade show text-center" role="alert">
-                <strong class="text-white">${text}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`
-        }
+    var alertBox = document.querySelector('.alert-box');
+    var profile_img = document.getElementById('profile-img');
+    var sidebarAvatar = document.getElementById('sidebar-avatar');
+    var csrf = document.getElementsByName('csrfmiddlewaretoken');
+    var preview_img = document.getElementById('preview-img-area');
+    var img_drag_zone = document.querySelector(".img-drag-zone")
+    var alert_str = document.getElementById('alert-str');
+    var ranger = document.getElementById("ranger");
+    var img_save_btn = document.getElementById("img-save-btn")
+    var img_input = document.querySelector(".img-input")
+    var user_input = document.querySelector(".user-input")
+    var avatar_delete_btn = document.getElementById("avatar-delete-btn")
+    var delete_icon = document.getElementById("delete-icon")
+    var natural_w, natural_h, initial_ranger, initial_diagnal
+    var max_size = 256;
+
+    dragElement(img_drag_zone);
+
+    user_input.addEventListener("change", () => {
+        showUpdateApplyAlert()
+    })
+    img_input.addEventListener("change", e => {
+        showImage(e.target)
+    })
+    ranger.addEventListener("change", e => {
+        imageResize(e.target)
+    })
+    img_save_btn.addEventListener("click", () => {
+        doCapture()
+    })
+    avatar_delete_btn.addEventListener("click", () => {
+        avatarDelete()
+    })
+    ["mouseenter","mouseleave"].forEach(event => {
+        delete_icon.addEventListener(event, () => {
+            delete_icon.children[0].classList.toggle("d-none")
+            delete_icon.children[1].classList.toggle("d-none")
+        })
+    })
+    function handleAlerts(type, text) {
+        alertBox.innerHTML =
+        `<div class="alert bg-${type} alert-dismissible fade show text-center" role="alert">
+            <strong class="text-white">${text}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`
+    }
+    function avatarDelete() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'user:avatar-delete' %}",
+            data: {
+                'csrfmiddlewaretoken': csrf[2].value
+            },
+            success: function(response) {
+                profile_img.src = response["default_image_url"]
+                sidebarAvatar.src = response["default_image_url"]
+                handleAlerts("danger", response["status"])
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        })
+    }
+    function doCapture() {
+        let img_count = img_input.files.length
+        let url = ""
         if (img_count){
             html2canvas(document.querySelector(".crop-mask")).then(function (canvas) {
             // Get the image data as JPEG and 0.9 quality (0.0 - 1.0)
                 profile_img.src = canvas.toDataURL("image/jpeg", 0.9)
                 sidebarAvatar.src = canvas.toDataURL("image/jpeg", 0.9)
                 canvas.toBlob((blob)=>{
-                    var fd = new FormData()
+                    let fd = new FormData()
                     fd.append('image', blob, '{{ user.username }}.png')
                     fd.append('csrfmiddlewaretoken', csrf[1].value)
                     $.ajax({
@@ -227,8 +306,7 @@
     function functionProfile(){
         document.querySelector("#profile").classList.toggle("active");
     }
-    function showAlert(){
-        const alert_str = document.getElementById('alert-str');
+    function showUpdateApplyAlert(){
         alert_str.classList.add('d-block');
     }
     function showImage(element){
@@ -242,11 +320,10 @@
             image.src = e.target.result;
             //Validate the File Height and Width.
             image.onload = function () {
-                var height = this.height;
-                var width = this.width;
+                let height = this.height;
+                let width = this.width;
                 natural_w = width;
                 natural_h = height;
-                const max_size = 256;
                 if (width < height) {
                     if (width >= max_size){
                         natural_w = width;
@@ -274,41 +351,38 @@
                 }
                 initial_ranger = (100*height)/natural_h;
                 initial_diagnal = Math.sqrt(Math.pow(width,2) + Math.pow(height,2));
-                window.ranger.value = initial_ranger;
-                const upload_img = document.getElementById('upload-img');
-                upload_img.src = e.target.result;
-                upload_img.style.width = width + "px";
-                upload_img.style.height = height + "px";
-                upload_img.style.marginLeft = -width/2 + "px";
-                upload_img.style.marginTop = -height/2 + "px";
-                upload_img.style.top = "50%";
-                upload_img.style.left = "50%";
+                ranger.value = initial_ranger;
+                preview_img.src = e.target.result;
+                preview_img.style.width = width + "px";
+                preview_img.style.height = height + "px";
+                preview_img.style.marginLeft = -width/2 + "px";
+                preview_img.style.marginTop = -height/2 + "px";
+                preview_img.style.top = "50%";
+                preview_img.style.left = "50%";
             };
         }
     }
     function imageResize(element){
-        var img = document.getElementById('upload-img');
-        var diagnal = Math.sqrt(Math.pow(img.width,2) + Math.pow(img.height,2));
-        if (element.value >= 0 & element.value <= window.initial_ranger){
-            factor = (((element.value*(window.initial_diagnal-256)) / window.initial_ranger) + 256) / diagnal;
-            var width = img.width * factor;
-            var height = img.height * factor;
-            img.style.width = width + "px";
-            img.style.height = height + "px";
-            img.style.marginLeft = -width/2 + "px";
-            img.style.marginTop = -height/2 + "px";
+        let diagnal = Math.sqrt(Math.pow(preview_img.width,2) + Math.pow(preview_img.height,2));
+        if (element.value >= 0 & element.value <= initial_ranger){
+            factor = (((element.value*(initial_diagnal-256)) / initial_ranger) + 256) / diagnal;
+            let width = preview_img.width * factor;
+            let height = preview_img.height * factor;
+            preview_img.style.width = width + "px";
+            preview_img.style.height = height + "px";
+            preview_img.style.marginLeft = -width/2 + "px";
+            preview_img.style.marginTop = -height/2 + "px";
         }else{
-            var width = (window.natural_w / 100) * element.value;
-            var height = (window.natural_h / 100) * element.value;
-            img.style.width = width + "px";
-            img.style.height = height + "px";
-            img.style.marginLeft = -width/2 + "px";
-            img.style.marginTop = -height/2 + "px";
+            let width = (natural_w / 100) * element.value;
+            let height = (natural_h / 100) * element.value;
+            preview_img.style.width = width + "px";
+            preview_img.style.height = height + "px";
+            preview_img.style.marginLeft = -width/2 + "px";
+            preview_img.style.marginTop = -height/2 + "px";
         }
     }
     function dragElement(elmnt) {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        var img = document.getElementById('upload-img');
         elmnt.onmousedown = dragMouseDown;
         function dragMouseDown(e) {
             e = e || window.event;
@@ -329,8 +403,8 @@
             pos3 = e.clientX;
             pos4 = e.clientY;
             // set the element's new position:
-            img.style.top = (img.offsetTop - pos2 + img.height/2) + "px";
-            img.style.left = (img.offsetLeft - pos1 + img.width/2) + "px";
+            preview_img.style.top = (preview_img.offsetTop - pos2 + preview_img.height/2) + "px";
+            preview_img.style.left = (preview_img.offsetLeft - pos1 + preview_img.width/2) + "px";
         }
         function closeDragElement() {
             // stop moving when mouse button is released:
@@ -338,6 +412,8 @@
             document.onmousemove = null;
         }
     }
+})();
+
 </script>
 {% endblock javascripts %}
 

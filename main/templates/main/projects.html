@@ -107,7 +107,7 @@
             <td class="d-none d-md-table-cell">
               {{ project.num_tickets }}
             </td>
-            <td>
+            <td class="unmarkable">
               <a class="btn btn-primary d-none d-lg-block" href="#">
                 Detail
               </a>
@@ -158,6 +158,7 @@
       "Create date": [["before", "lt"], ["since", "gte"], ["on", "exact"]],
       "Manager": [["contain", "icontain"]]
     };
+    window.onload = functionProjects;
     var table = document.getElementById("myTable");
     var rows = Array.from(document.getElementsByTagName("tr"));
     var headers = Array.from(document.getElementsByTagName("th"));
@@ -169,11 +170,13 @@
     var per_page_obj = document.querySelector("#per-page");
     var like_btns = Array.from(document.querySelectorAll("#like-btn"));
     var search_input = document.getElementById("search-input");
-
+    var Marker = new Mark(rows)
     initTableSort()
     initPagination()
     renderTable()
-
+    function functionProjects() {
+      document.querySelector("#projects").classList.toggle("active");
+    }
     manage_btn.forEach(item => {
       item.addEventListener("mouseenter", e => {
         item.children[0].classList.toggle("d-none")
@@ -393,7 +396,11 @@
     function filter(value) {
       splits = value.trim().split(/\s+/)
       rows.forEach(item => item.style.display = "")
+      Marker.unmark()
       for (let i=0; i<splits.length; i++) {
+        Marker.mark(splits[i], {
+          "exclude": [".unmarkable *"] //ignore the unmarkable and all it children
+        })
         for (let j=0; j<rows.length; j++) {
           let columns = Array.from(rows[j].querySelectorAll("td"))
           let count = 0
