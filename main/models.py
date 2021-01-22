@@ -69,9 +69,6 @@ class Project(models.Model):
     def __str__(self):
         return f"{self.title}-{self.date_created}"
 
-    def open_ticket_count(self):
-        return self.tickets.filter(status='open').count()
-
     def get_manager_name_set(self):
         name_set = []
         for manager in self.manager.all():

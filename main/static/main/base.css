@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
 :root {
-  font-size: 16px;
-  font-family: "Roboto", sans-serif;
   --bg-primary: #37426f;
   --bg-secondary: #b1bce6;
   --transition-speed: 500ms;
@@ -19,7 +17,7 @@
 
 html,
 body {
-  font-size: 16px !important;
+  font-size: calc(8px + (18 - 8) * ((100vw - 300px) / (1920 - 300)));
   font-family: "Roboto", sans-serif !important;
   height: 100%;
   background-color: var(--bg-primary);
@@ -44,15 +42,8 @@ body::-webkit-scrollbar-thumb {
 
 #content {
   margin-left: 250px;
-  padding: 20px;
+  padding: 1.5vw 5vw 1.5vw 5vw;
   transition: all 0.3s;
-}
-
-p label {
-  font-size: 1.1em;
-  font-weight: 300;
-  line-height: 1.7em;
-  color: rgb(255, 255, 255);
 }
 
 a,
@@ -78,7 +69,7 @@ a:focus {
   border-radius: 20px;
   max-width: 480px;
   color: var(--bg-primary);
-  padding: 20px;
+  padding: 1rem;
   margin: auto;
   box-shadow: 0 4px 8px 0 rgba(224, 224, 224, 0.4),
     0 6px 20px 0 rgba(223, 223, 223, 0.29);
@@ -196,9 +187,8 @@ a:focus {
 
 #sidebar {
   position: fixed;
-  min-width: 250px;
+  width: 250px;
   height: 100%;
-  max-width: 250px;
   z-index: 3;
   background: var(--bg-secondary);
   color: #fff;
@@ -207,13 +197,13 @@ a:focus {
 
 #open-side {
   position: absolute;
-  top: 10px;
-  right: -20px;
+  top: 1rem;
+  right: -1.25rem;
   z-index: 0;
   display: none;
-  padding-left: 5px;
-  width: 40px;
-  height: 40px;
+  padding-left: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background: var(--bg-secondary);
 }
@@ -224,14 +214,14 @@ a:focus {
 }
 
 #close-side {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: none;
   text-align: center;
   background: var(--bg-secondary);
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1rem;
+  right: 1rem;
   cursor: pointer;
   -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;
@@ -244,15 +234,15 @@ a:focus {
 }
 
 #sidebar .sidebar-header {
-  padding: 20px;
-  margin-top: 10px;
+  font-size: 1.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
   background: var(--bg-secondary);
 }
 
 .sidebar-header strong {
+  font-size: 1.8rem;
   color: var(--bg-primary);
-  font-size: 1.4em;
-  font-weight: 600;
 }
 
 .sidebar-nav {
@@ -274,7 +264,7 @@ a:focus {
 
 #sidebar ul li a {
   padding: 10px;
-  font-size: 1.1em;
+  font-size: 1.1rem;
   display: block;
 }
 
@@ -288,13 +278,13 @@ a:focus {
   display: block;
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 1rem;
   transform: translateY(-50%);
 }
 
 ul ul a {
-  font-size: 0.9em !important;
-  padding-left: 30px !important;
+  font-size: 0.9rem !important;
+  padding-left: 1.5rem !important;
   background: #6d7fcc;
 }
 

@@ -53,7 +53,7 @@
           <tr>
             <td class="d-none">{{ project.id }}</td>
           {% if request.user in project.liked.all %}
-            <td class="middle aligned content" data-order="0">
+            <td data-order="0">
               <i role="button"
                   class="bi bi-heart-fill"
                   id="like-btn"
@@ -63,7 +63,7 @@
                   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove from favourite">
               </i>
           {% else %}
-            <td class="middle aligned content" data-order="1">
+            <td data-order="1">
               <i role="button"
                   class="bi bi-heart"
                   id="like-btn"
@@ -78,17 +78,20 @@
               <h4>{{ project.title }}</h4>
             </td>
             </td>
-            <td>{{ project.date_created | date:"m/j/Y" }}</td>
+            <td data-order="{{ project.date_created | date:"U" }}">
+              {{ project.date_created | date:"m/j" }}
+              <p class="d-none d-md-inline-block">{{ project.date_created | date:"Y" }}</p>
+            </td>
             {% if request.user in project.manager.all %}
             <td data-order="0" data-search="{{ request.user.get_full_name }}">
-              <a class="btn btn-outline-secondary btn-sm" id="manage-btn" href="#">
-                <div id="visible-text">
+              <a class="btn btn-outline-secondary btn-sm border-0" id="manage-btn" href="#">
+                <div class="text-decoration-underline fs-6">
                   <img class="ui avatar image d-none d-md-inline-block" src="{{ request.user.profile.image.url }}">
                   {{ request.user.get_full_name }}
                 </div>
-                <div class="d-none" id="hidden-text">
-                  <i class="bi bi-person-lines-fill"></i>
-                  Manage<p class="d-none d-md-inline-block ms-1">User</p>
+                <div class="d-none fs-6">
+                  <i class="bi bi-person-lines-fill d-none d-md-inline-block"></i>
+                  Manage
                 </div>
               </a>
             {% else %}
@@ -102,7 +105,7 @@
             {% endif %}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ project.open_ticket_count }}
+              {{ project.num_tickets }}
             </td>
             <td>
               <a class="btn btn-primary d-none d-lg-block" href="#">
@@ -167,8 +170,8 @@
     var like_btns = Array.from(document.querySelectorAll("#like-btn"));
     var search_input = document.getElementById("search-input");
 
+    initTableSort()
     initPagination()
-    initTable()
     renderTable()
 
     manage_btn.forEach(item => {
@@ -182,11 +185,13 @@
       })
     })
     search_input.addEventListener("keyup", e => {
-      let value = e.target.value.toUpperCase()
-      console.log(value)
-      filter(value)
-      initPagination()
-      renderTable()
+      table_loading(table.tBodies[0])
+      setTimeout(() => {
+        let value = e.target.value.toUpperCase()
+        filter(value)
+        initPagination()
+        renderTable()
+      }, 400)
     })
     like_btns.forEach(item => {
       item.addEventListener("click", e => {
@@ -216,28 +221,27 @@
         })
       })
     })
-
     per_page_obj.addEventListener("change", e => {
       initPagination()
       renderTable()
     })
-
     reset_btn.addEventListener("click", () => {
       resetSort()
       filter("")
+      initTableSort()
       initPagination()
-      initTable()
       renderTable()
       search_input.value = ""
     })
-
     headers.forEach((item, index) => {
       item.addEventListener('click', ()=>{
         if (item.classList.contains("sortable")) {
           resetSort(index)
           if (item.classList.contains("asc")) {
+            sort(0, "asc")
             sort(index, "desc")
           } else {
+            sort(0, "asc")
             sort(index, "asc")
           }
           get_rows_rendered_all()
@@ -245,6 +249,21 @@
         }
       })
     })
+    function table_loading(element) {
+      element.innerHTML = `<td colspan="${headers.length}">`+
+                            '<h2 class="text-muted">'+
+                              '<div class="spinner-border text-muted me-3" role="status">'+
+                                '<span class="visually-hidden">Loading...</span>'+
+                              '</div>'+
+                              'Loading...'+
+                            '</h2>'+
+                          '</td>'
+    }
+    function initTableSort() {
+      sort(0, "asc")
+      sort(undefined, "desc")
+      sort(1, "asc")
+    }
     function get_rows_rendered_all() {
       rows_rendered_all = []
       rows.forEach((item) => {
@@ -252,11 +271,6 @@
           rows_rendered_all.push(item)
         }
       })
-      console.log(rows_rendered_all)
-    }
-    function initTable() {
-      sort(undefined, "desc");
-      sort(1, "asc");
     }
     function initPagination() {
       get_rows_rendered_all()
@@ -316,8 +330,34 @@
         })
       })
     }
+    function renderTable() {
+      if (rows_rendered_all.length == 0) {
+        table.tBodies[0].innerHTML = `<td colspan="${headers.length}">`+
+                                        '<h2 class="text-muted">'+
+                                            '<i class="bi bi-search me-2"></i>'+
+                                            'No match found......'+
+                                            '</br>'+
+                                        '</h2>'+
+                                        '<a class="btn border-0 text-primary text-decoration-underline" '+
+                                            'id="clear-search">Clear Search</a>'+
+                                      '</td>'
+        document.getElementById("clear-search")
+                .addEventListener("click", ()=>{
+          search_input.value = ""
+          filter("")
+          initPagination()
+          renderTable()
+        })
+      } else {
+        let start = page_index * per_page - per_page
+        let end = page_index * per_page
+        let rows_rendered = rows_rendered_all.slice(start, end)
+        table.tBodies[0].innerHTML = ""
+        rows_rendered.forEach(row => table.tBodies[0].appendChild(row));
+      }
+    }
     function compareValues(a, b) {
-      if (isNaN(Number(a) || Number(b))) {
+      if (isNaN(Number(a)) || isNaN(Number(b))) {
         return a.localeCompare(b);
       }else {
         return (a<b) ? -1 : (a>b) ? 1 : 0;
@@ -348,17 +388,6 @@
       } else {
         headers[index].classList.add("asc")
         headers[index].classList.remove("desc")
-      }
-    }
-    function renderTable() {
-      if (rows_rendered_all.length == 0) {
-        table.tBodies[0].innerHTML = '<td colspan="7">No match found......</td>'
-      } else {
-        let start = page_index * per_page - per_page
-        let end = page_index * per_page
-        let rows_rendered = rows_rendered_all.slice(start, end)
-        table.tBodies[0].innerHTML = ""
-        rows_rendered.forEach(row => table.tBodies[0].appendChild(row));
       }
     }
     function filter(value) {

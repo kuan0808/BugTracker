@@ -9,11 +9,9 @@
         <!-- Sidebar close button -->
 
         <!-- Sidebar Open button-->
-        <div id="open-side">
-            <button type="button" class="btn" onclick="openSide()">
-                <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
+        <button type="button" class="border-0" id="open-side" onclick="openSide()">
+            <i class="fas fa-arrow-right"></i>
+        </button>
         <!-- Sidebar Open button-->
 
         <div class="sidebar-header text-center">
@@ -22,7 +20,7 @@
                     <img id="sidebar-avatar" src="{{ user.profile.image.url }}" alt="Profile Image">
                 </a>
             </div>
-            <div class="mt-2">
+            <div class="mt-3 mb-4">
                 <h3>{% trans "Welcome, " %}<strong>{% trans user.username %}</strong></h3>
             </div>
         </div>
@@ -74,8 +72,8 @@
         </ul>
     </nav>
     <div id="overlay"></div>
-{% block javascripts %}
-<script type="text/javascript">
+
+<script>
     window.onresize = windowSizeCheck;
     const overlay = document.getElementById("overlay")
     const sidebar_open_btn = document.getElementById("open-side")
@@ -118,5 +116,5 @@
         }
     }
 </script>
-{% endblock javascripts %}
+
 

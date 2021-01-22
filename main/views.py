@@ -29,12 +29,12 @@ class ProjectListView(TemplateView):
     template_name = 'main/projects.html'
 
     def get(self, request):
-        num_ticket = Count('tickets')
+        num_ticketS = Count('tickets')
         liked_or_not = Count('liked',
                              filter=Q(liked__id__exact=request.user.id)
                              )
         qs = (Project.objects
-              .annotate(num_tickets=num_ticket)
+              .annotate(num_tickets=num_ticketS)
               .annotate(liked_or_not=liked_or_not)
               )
         qs_json = list(qs.values())

@@ -65,7 +65,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE
     )
     image = models.ImageField(
-        default='default.jpg',
+        default='default.png',
         upload_to=get_profile_image_path
     )
 
